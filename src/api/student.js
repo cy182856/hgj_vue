@@ -1,10 +1,21 @@
 import request from '@/utils/request'
+import { url } from '@/store/store'
 
 export function fetchList(query) {
+  console.log("query---------------" + query.limit)
   return request({
-    url: 'http://localhost:10010/local/test/list',
+    url: url + '/test/list',
     method: 'get',
     params: query
+  })
+}
+
+export function deleteStudent(id) {
+  console.log("id-----------------"+id)
+  return request({
+    url: url + '/test/delete',
+    method: 'get',
+    params: { id }
   })
 }
 
@@ -26,15 +37,16 @@ export function fetchPv(pv) {
 
 export function createArticle(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: url + '/test/save',
     method: 'post',
     data
   })
 }
 
 export function updateArticle(data) {
+  console.log(data.name)
   return request({
-    url: '/vue-element-admin/article/update',
+    url: url + '/test/save',
     method: 'post',
     data
   })

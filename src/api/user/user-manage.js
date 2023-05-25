@@ -1,10 +1,9 @@
 import request from '@/utils/request'
 import { url } from '@/utils/url'
 
-export function fetchList(query) {
-  console.log("query---------------" + query.name)
+export function userList(query) {
   return request({
-    url: url + '/test/list',
+    url: url + '/user/list',
     method: 'get',
     params: query
   })
@@ -13,7 +12,7 @@ export function fetchList(query) {
 export function deleteStudent(id) {
   console.log("id-----------------"+id)
   return request({
-    url: url + '/test/delete',
+    url: url + '/user/delete',
     method: 'get',
     params: { id }
   })
@@ -35,9 +34,9 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
+export function saveUser(data) {
   return request({
-    url: url + '/test/save',
+    url: url + '/user/save',
     method: 'post',
     data
   })
@@ -46,7 +45,7 @@ export function createArticle(data) {
 export function updateArticle(data) {
   console.log(data.name)
   return request({
-    url: url + '/test/save',
+    url: url + '/user/save',
     method: 'post',
     data
   })

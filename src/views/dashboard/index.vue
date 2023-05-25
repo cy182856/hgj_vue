@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-container">
     <component :is="currentRole" />
+  <!-- <div class="dashboard-text">name: {{ name }}</div> -->
   </div>
 </template>
 

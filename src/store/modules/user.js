@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import data from '@/views/pdf/content'
 
 const state = {
   token: getToken(),
@@ -48,16 +49,19 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
+        
         const { data } = response
 
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
+        console.log(data)
+        
         const { roles, name, avatar, introduction } = data
-
+        console.log("roles--------------" + roles)
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
+
           reject('getInfo: roles must be a non-null array!')
         }
 

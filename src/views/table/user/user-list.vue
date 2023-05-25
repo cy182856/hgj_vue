@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
-      <el-input v-model="listQuery.name" placeholder="Name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select>
@@ -36,19 +36,39 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="编号" prop="userCode" sortable="custom" align="center" width="80" :class-name="getSortClass('userCode')">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.userCode }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="NAME" prop="name" sortable="custom" align="center" width="150" :class-name="getSortClass('name')">
+      <el-table-column label="用户名" prop="userName" sortable="custom" align="center" width="150" :class-name="getSortClass('userName')">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="AGE" prop="age" sortable="custom" align="center" width="80" :class-name="getSortClass('age')">
+      <el-table-column label="昵称" prop="nikeName" sortable="custom" align="center" width="80" :class-name="getSortClass('nikeName')">
         <template slot-scope="{row}">
-          <span>{{ row.age }}</span>
+          <span>{{ row.nikeName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" prop="userType" sortable="custom" align="center" width="80" :class-name="getSortClass('userType')">
+        <template slot-scope="{row}">
+          <span>{{ row.userType }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="电话" prop="mobile" sortable="custom" align="center" width="120" :class-name="getSortClass('mobile')">
+        <template slot-scope="{row}">
+          <span>{{ row.mobile }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="180px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" width="180px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="Date" width="150px" align="center">
@@ -147,11 +167,17 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Name" prop="name">
-          <el-input v-model="temp.name" />
+        <el-form-item label="编号" prop="userCode">
+          <el-input v-model="temp.userCode" />
         </el-form-item>
-        <el-form-item label="Age" prop="age">
-          <el-input v-model="temp.age" />
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="temp.userName" />
+        </el-form-item>
+        <el-form-item label="昵称" prop="nikeName">
+          <el-input v-model="temp.nikeName" />
+        </el-form-item>
+        <el-form-item label="电话" prop="mobile">
+          <el-input v-model="temp.mobile" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -177,7 +203,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle, deleteStudent } from '@/api/student'
+import { userList, fetchPv, saveUser, updateArticle, deleteStudent } from '@/api/user/user-manage'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -262,7 +288,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      userList(this.listQuery).then(response => {
         this.list = response.data.pageInfo.list
         this.total = response.data.pageInfo.total
 
@@ -321,7 +347,7 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
+          saveUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({

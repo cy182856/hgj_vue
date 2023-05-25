@@ -82,7 +82,8 @@ export default {
   components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+      // if (!validUsername(value)) {
+      if (validUsername(value)) {
         callback(new Error('Please enter the correct user name'))
       } else {
         callback()
@@ -153,6 +154,7 @@ export default {
       })
     },
     handleLogin() {
+      console.log(this.loginForm.username)
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true

@@ -21,6 +21,9 @@ module.exports = {
         "allowFirstLine": false
       }
     }],
+    "quotes": "off",
+    "semi": "off",
+    "comma-dangle": "off",
     "vue/singleline-html-element-content-newline": "off",
     "vue/multiline-html-element-content-newline":"off",
     "vue/name-property-casing": ["error", "PascalCase"],

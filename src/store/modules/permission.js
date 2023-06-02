@@ -4,6 +4,11 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { authMenu } from '@/api/user/user-menu'// 【新加入】引入请求，后面有文件，先不慌
 import Layout from '@/layout'// 【新加入】引入layout
 
+const state = {
+  routes: [],
+  addRoutes: [],
+  token: getToken()
+}
 
 //这里自己写方法，作用就是向 asyncRoutes 插入路由，达到动态路由的效果
 /**
@@ -84,13 +89,6 @@ export function filterAsyncRoutes(routes, roles) {
   return res
 }
 
-const state = {
-  routes: [],
-  addRoutes: [],
-  token: getToken()
-}
-
-
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
@@ -122,7 +120,7 @@ const actions = {
       // 【新加入】开始
       const loadMenuData = []
       // 先查询后台并返回左侧菜单数据并把数据添加到路由，authMenu（state.token）后面会写
-      authMenu(state.token).then(response => {
+      authMenu(getToken()).then(response => {
 
         let data = response
         //我的code为20000为正常
@@ -133,7 +131,7 @@ const actions = {
           })
         }else{
           //获取目录的json
-          data = response.dataList
+          data = response.menuList
           console.log("DATA-------------------------"+response.dataList);
           //把data的数据拷贝到loadMenuData里面
           Object.assign(loadMenuData, data)
@@ -164,8 +162,8 @@ const actions = {
 }
 
 export default {
-  namespaced: true,
   state,
+  namespaced: true,
   mutations,
   actions
 }

@@ -2,7 +2,7 @@
 
 import Layout from '@/layout'
 
-const student = {
+const user = {
   path: '/table/user',
   component: Layout,
   redirect: '/user-list',
@@ -26,4 +26,4 @@ const student = {
     }
   ]
 }
-export default student
+export default user

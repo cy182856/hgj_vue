@@ -9,3 +9,11 @@ export function authMenu(token) {
     params: { token }
   })
 }
+
+export function userMenuList(query) {
+  return request({
+    url: url + '/user/menu/list',
+    method: 'get',
+    params: query
+  })
+}

@@ -1,3 +1,6 @@
-// export const url='http://192.168.79.5:9999/smp';
-// export const url='http://127.0.0.1:8081/smp';
- export const url = 'http://localhost:10010';
+//export const url='http://localhost:8081/hgj';
+//export const url='http://192.168.79.5:82/mgr';
+export const url='https://zhgj.shofw.com/mgr';
+//export const url='http://192.168.23.108:82/mgr';
+//export const url='http://192.168.79.133:82/mgr';
+

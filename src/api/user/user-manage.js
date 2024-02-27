@@ -9,6 +9,20 @@ export function userList(query) {
   })
 }
 
+export function deptSelect() {
+  return request({
+    url: url + '/user/deptSelect',
+    method: 'get'
+  })
+}
+
+export function userSync() {
+  return request({
+    url: url + '/user/sync',
+    method: 'get'
+  })
+}
+
 export function deleteStudent(id) {
   console.log("id-----------------"+id)
   return request({
@@ -42,10 +56,10 @@ export function saveUser(data) {
   })
 }
 
-export function updateArticle(data) {
+export function updateUser(data) {
   console.log(data.name)
   return request({
-    url: url + '/user/save',
+    url: url + '/user/update',
     method: 'post',
     data
   })

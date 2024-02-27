@@ -180,7 +180,8 @@ npm install
 npm run dev
 ```
 
-This will automatically open http://localhost:9527
+ This will automatically open http://localhost:9527
+# This will automatically open hgj.shofw.com:9527
 
 ## Build
 

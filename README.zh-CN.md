@@ -199,6 +199,7 @@ npm run dev
 ```
 
 浏览器访问 http://localhost:9527
+ # 浏览器访问 hgj.shofw.com:9527
 
 ## 发布
 

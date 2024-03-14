@@ -110,8 +110,11 @@
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="temp.userName" readonly />
         </el-form-item>
-        <el-form-item label="电话" prop="mobile">
+        <!-- <el-form-item label="电话" prop="mobile">
           <el-input v-model="temp.mobile" readonly/>
+        </el-form-item> -->
+        <el-form-item label="电话" prop="mobile">
+          <el-input v-model="temp.mobile"/>
         </el-form-item>
         <el-form-item label="值班电话" prop="phone">
           <el-input v-model="temp.phone"/>
@@ -474,6 +477,14 @@ export default {
         if (valid) {
           this.temp.budId = this.budId;
           const tempData = Object.assign({}, this.temp)
+          if(tempData.mobile == null || tempData.mobile == ""){
+            this.$notify({
+              message: '电话不能为空！',
+              type: 'error',
+              duration: 2000
+            })
+            return
+          }
           // if(tempData.roleId == null || tempData.roleId == ""){
           //   this.$notify({
           //     message: '角色不能为空！',

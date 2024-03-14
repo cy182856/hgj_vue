@@ -16,9 +16,16 @@ export function deptSelect() {
   })
 }
 
-export function userSync() {
+export function userSyncOfw() {
   return request({
-    url: url + '/user/sync',
+    url: url + '/user/sync/ofw',
+    method: 'get'
+  })
+}
+
+export function userSyncFx() {
+  return request({
+    url: url + '/user/sync/fx',
     method: 'get'
   })
 }

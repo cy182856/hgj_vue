@@ -3,8 +3,11 @@
       <div class="filter-container">
         <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon" @click="handleUserSync">
-          通讯录同步
+        <el-button v-waves class="filter-item" type="primary" icon="el-icon" @click="syncOfw">
+          东方渔人码头通讯录同步
+        </el-button>
+        <el-button v-waves class="filter-item" type="primary" icon="el-icon" @click="syncFx">
+          凡享资产通讯录同步
         </el-button>
       </div>
 
@@ -18,7 +21,7 @@
   </template>
   
   <script>
-  import { userList, userSync, fetchPv, saveUser, updateArticle, deleteStudent } from '@/api/user/user-manage'
+  import { userList, userSyncOfw, userSyncFx, fetchPv, saveUser, updateArticle, deleteStudent } from '@/api/user/user-manage'
   import waves from '@/directive/waves' // waves directive
   import { parseTime } from '@/utils'
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -115,8 +118,17 @@
         })
       },
     
-      handleUserSync() {
-        userSync().then(response => {
+      syncOfw() {
+        userSyncOfw().then(response => {
+            this.$message({
+            message: '同步成功！',
+            type: 'success'
+            })
+            this.user = response.data.user
+        })
+      },
+      syncFx() {
+        userSyncFx().then(response => {
             this.$message({
             message: '同步成功！',
             type: 'success'

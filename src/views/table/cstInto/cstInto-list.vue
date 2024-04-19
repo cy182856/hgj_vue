@@ -7,12 +7,16 @@
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 200px; margin-left: 5px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
         <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
         <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 200px" class="filter-item">
-            <el-option label="业主" :value="0" />
-            <el-option label="租户" :value="1" />
+            <el-option label="客户" :value="0" />
+            <el-option label="委托人" :value="1" />
+            <el-option label="产权人" :value="2" />
+            <el-option label="住户" :value="3" />
         </el-select>
-        <el-select v-model="listQuery.intoStatus" placeholder="入住状态" clearable style="width: 200px; margin-left: 5px;" class="filter-item">
+        <el-select v-model="listQuery.intoStatus" placeholder="状态" clearable style="width: 200px; margin-left: 5px;" class="filter-item">
             <el-option label="未入住" :value="0" />
             <el-option label="已入住" :value="1" />
+            <el-option label="已解绑" :value="2" />
+            <el-option label="待审核" :value="3" />
         </el-select>
         <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
           查询
@@ -51,19 +55,23 @@
         </el-table-column>
         <el-table-column label="身份" prop="intoRole" align="center" width="100">
           <template slot-scope="{row}">
-            <span v-if = "row.intoRole == 0">业主</span>
-            <span v-if = "row.intoRole == 1">租户</span>
+            <span v-if = "row.intoRole == 0">客户</span>
+            <span v-if = "row.intoRole == 1">委托人</span>
+            <span v-if = "row.intoRole == 2">产权人</span>
+            <span v-if = "row.intoRole == 3">住户</span>
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="intoStatus" align="center" width="100">
           <template slot-scope="{row}">
-            <span v-if="row.intoStatus == 0">未入住</span>
-            <span v-if="row.intoStatus == 1">已入住</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="房间编号" prop="houseId" align="center" width="100">
-          <template slot-scope="{row}">
-            <span>{{ row.houseId }}</span>
+            <span v-if="row.intoStatus == 0 && (row.intoRole == 0 || row.intoRole == 2)">未入住</span>
+            <span v-if="row.intoStatus == 1 && (row.intoRole == 0 || row.intoRole == 2)">已入住</span>
+            <span v-if="row.intoStatus == 2 && (row.intoRole == 0 || row.intoRole == 2)">已解绑</span>
+
+            <span v-if="row.houseIntoStatus == 0 && (row.intoRole == 1 || row.intoRole == 3)">未入住</span>
+            <span v-if="row.houseIntoStatus == 1 && (row.intoRole == 1 || row.intoRole == 3)">已入住</span>
+            <span v-if="row.houseIntoStatus == 2 && (row.intoRole == 1 || row.intoRole == 3)">已解绑</span>   
+            <span v-if="row.houseIntoStatus == 3 && (row.intoRole == 1 || row.intoRole == 3)">待审核</span>
+        
           </template>
         </el-table-column>
         <el-table-column label="房间号" prop="resName" align="center" width="150">
@@ -71,6 +79,22 @@
             <span>{{ row.resName }}</span>
           </template>
         </el-table-column>
+        <!-- <el-table-column label="入住状态" prop="resName" align="center" width="150">
+          <template slot-scope="{row}">
+            <span v-if = "row.intoStatus == 0">未入住</span>
+            <span v-if = "row.intoStatus == 1">已入住</span>
+            <span v-if = "row.intoStatus == 2">已解绑</span>
+            <span v-if = "row.intoStatus == 3">待审核</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="房间状态" prop="resName" align="center" width="150">
+          <template slot-scope="{row}">
+            <span v-if = "row.houseIntoStatus == 0">未入住</span>
+            <span v-if = "row.houseIntoStatus == 1">已入住</span>
+            <span v-if = "row.houseIntoStatus == 2">已解绑</span>
+            <span v-if = "row.houseIntoStatus == 3">待审核</span>
+          </template>
+        </el-table-column> -->
         <el-table-column label="创建时间" align="center" width="160">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
@@ -83,10 +107,13 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
-            <el-button v-if="row.intoStatus == 1" size="mini" type="danger" @click="handleDelete(row,$index)">
+            <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == 3 || row.houseIntoStatus == null) " size="mini" type="danger" @click="handleDelete(row,$index)">
               解除绑定
             </el-button>
-            <el-button v-if="row.intoStatus == 1 && row.intoRole == 1" size="mini" type="primary" @click="handleOwner(row,$index)">
+            <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 1" size="mini" type="primary" @click="handleOwner(row,$index)">
+              设为客户
+            </el-button>
+            <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 3" size="mini" type="primary" @click="handleOwner(row,$index)">
               设为业主
             </el-button>
           </template>
@@ -232,7 +259,7 @@
           cancelButtonText: "取消",
           type: "warning",
         }).then(() => {
-          deleteCstInto(row.id,).then((res) => {
+          deleteCstInto(row.id,row.cstIntoHouseId).then((res) => {
             if (res.code == 20000) {
               this.$notify({
                 title: 'Success',
@@ -241,6 +268,7 @@
                 duration: 2000
             })
               this.list.splice(index, 1)
+              this.getList();
               } else {
                 this.$notify({
                   message: res.data.message,
@@ -262,7 +290,7 @@
           cancelButtonText: "取消",
           type: "warning",
         }).then(() => {
-          ownerCstInto(row.id,).then((res) => {
+          ownerCstInto(row.id).then((res) => {
             if (res.code == 20000) {
               this.$notify({
                 title: 'Success',

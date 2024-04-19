@@ -9,12 +9,12 @@ export function cstIntoList(query) {
   })
 }
 
-export function deleteCstInto(id) {
+export function deleteCstInto(id,cstIntoHouseId) {
   console.log("------------ID-----------"+id)
   return request({
     url: url + '/cstInto/delete',
     method: 'get',
-    params: { id }
+    params: { id, cstIntoHouseId}
   })
 }
 

@@ -24,7 +24,11 @@
         highlight-current-row
         style="width: 100%;"
         @sort-change="sortChange"
+        @selection-change="handleSelectionChange"
+        ref="multipleTable"
+        selection-type="checkbox"
       >
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
 
         <el-table-column label="房屋编号" prop="id" align="center" width="180">
           <template slot-scope="{row}">
@@ -161,13 +165,13 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+        <!-- <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="createQrCode(row,$index)">
             生成二维码
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
         <!-- <el-table-column label="操作" align="center" width="80" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -231,6 +235,7 @@
     },
     data() {
       return {
+        multipleSelection: [],
         webExpandedKeys:[],
         webCheckedKeys:[],
         selectedWebCheckedKeys:[],
@@ -305,28 +310,34 @@
           this.listLoading = false
         }, 1.5 * 1000)
       })
-
+    },
+    
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      // for(var i = 0; i<this.multipleSelection.length; i++){
+      //   alert(this.multipleSelection[i].id)
+      // }    
     },
 
-      handleFilter() {
-        this.listQuery.page = 1
-        this.getList()
-      },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
   
-      sortChange(data) {
-        const { prop, order } = data
-        if (prop === 'id') {
-          this.sortByID(order)
-        }
-      },
-      sortByID(order) {
-        if (order === 'ascending') {
-          this.listQuery.sort = '+id'
-        } else {
-          this.listQuery.sort = '-id'
-        }
-        this.handleFilter()
-      },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop === 'id') {
+        this.sortByID(order)
+      }
+    },
+    sortByID(order) {
+      if (order === 'ascending') {
+        this.listQuery.sort = '+id'
+      } else {
+        this.listQuery.sort = '-id'
+      }
+      this.handleFilter()
+    },
        // 获取下拉菜单数据
     getSelectList(){
       // 项目

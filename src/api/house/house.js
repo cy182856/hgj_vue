@@ -9,6 +9,14 @@ export function houseList(query) {
   })
 }
 
+export function houseSelect(cstCode) {
+  return request({
+    url: url + '/house/select',
+    method: 'get',
+    params: { cstCode }
+  })
+}
+
 export function createQrCode(query) {
   return request({
     url: url + '/house/createQrCode',

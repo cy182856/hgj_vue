@@ -17,6 +17,16 @@ export function createQrCode(query) {
   })
 }
 
+
+export function createIntoCstQrCode(data) {
+  return request({
+    url: url + '/cst/createIntoCstQrCode',
+    method: 'post',
+    data
+  })
+}
+
+
 export function saveCstMenu(data) {
   return request({
     url: url + '/cst/saveCstMenu',

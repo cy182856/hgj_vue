@@ -7,8 +7,8 @@
       </el-select>
       <el-input v-model="listQuery.code" placeholder="客户编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cerNo" placeholder="证件号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.licNo" placeholder="执照号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!-- <el-input v-model="listQuery.cerNo" placeholder="证件号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
+      <!-- <el-input v-model="listQuery.licNo" placeholder="执照号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>
@@ -24,17 +24,17 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- <el-table-column label="项目号" prop="code" align="center" width="140">
+      <el-table-column label="项目" prop="projectName" align="center" width="140">
         <template slot-scope="{row}">
-          <span>{{ row.orgId }}</span>
+          <span>{{ row.projectName }}</span>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="客户编码" prop="code" align="center" width="140">
         <template slot-scope="{row}">
           <span>{{ row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客户类型" prop="cstType" align="center" width="160">
+      <el-table-column label="客户类型" prop="cstType" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.cstType }}</span>
         </template>
@@ -43,13 +43,15 @@
         <template slot-scope="{row}">
           <span>{{ row.cstName }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="证件类型" prop="cerType" align="center" width="80">
+      </el-table-column>  
+      <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="160">
         <template slot-scope="{row}">
-          <span>{{ row.cerType }}</span>
+          <span v-for=" (val, key) in row.tagList" :key="key">
+                 {{ val.name }},
+          </span>
         </template>
       </el-table-column>
-      <el-table-column label="证件号码" prop="cerNo" align="center" width="180">
+      <!-- <el-table-column label="证件号码" prop="cerNo" align="center" width="160">
         <template slot-scope="{row}">
           <span>{{ row.cerNo }}</span>
         </template>
@@ -58,8 +60,8 @@
         <template slot-scope="{row}">
           <span>{{ row.licNo }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="客户级别" prop="cstLevel" align="center" width="200">
+      </el-table-column> -->
+      <el-table-column label="客户级别" prop="cstLevel" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.cstLevel }}</span>
         </template>
@@ -69,11 +71,16 @@
           <span>{{ row.isAffect }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="合同性质" prop="contractCharacter" align="center" width="120">
+      <!-- <el-table-column label="合同性质" prop="contractCharacter" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.contractCharacter }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
+      <!-- <el-table-column label="证件类型" prop="cerType" align="center" width="80">
+        <template slot-scope="{row}">
+          <span>{{ row.cerType }}</span>
+        </template>
+      </el-table-column> -->
       <el-table-column label="创建时间" width="160px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime }}</span>
@@ -84,11 +91,14 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="createQrCode(row,$index)">
-            生成二维码
+          <el-button type="primary" size="mini" @click="createIntoQrcode(row,$index)">
+            生成入住二维码
           </el-button>
+          <!-- <el-button type="primary" size="mini" @click="createQrCode(row,$index)">
+            生成二维码
+          </el-button> -->
           <el-button type="primary" size="mini"  @click="menuTreeCreate(row)">
             权限设置
           </el-button>
@@ -111,11 +121,15 @@
       </span>
     </el-dialog>
 
-
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      
       <div align="center">
-        <img :src = imgUrl />
+        <img :src = imgUrl style="height: 300px;width: 350px;"/>
       </div>
+      <div style="margin-left: 29%; font-size: 14px; width: 305px; font-weight: bold;">{{this.temp.cstName}}</div>   
+      <div style="margin-left: 29%; font-size: 12px; width: 305px; margin-top: 10px;">房间号：{{houseList}}</div>  
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;">生成时间：{{qrCreateTime}}</div>  
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;">有效截止时间：{{qrCutOffTime}}</div> 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -167,17 +181,61 @@
         </el-button>
       </div>
     </el-dialog>
+    <!-- 生成入住二维码 -->
+    <el-dialog :title="textMap[createIntoQrCodeStatus]" :visible.sync="createIntoQrCodeFormVisible">
+      <el-form ref="createIntoQrCodedataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <el-form-item class="is_show" label="code" prop="code">
+          <el-input v-model="temp.code" />
+        </el-form-item>
+        <el-form-item class="is_show" label="orgId" prop="orgId">
+          <el-input v-model="temp.orgId" />
+        </el-form-item>
+        <div style="font-size: 18px;">{{ temp.cstName }}</div>
+        <el-form-item style="margin-top: 20px;" label="入住类型">
+          <div>
+            <div v-for="intoTypeOption in intoTypeOptions" :key="intoTypeOption.intoTypeId" @change="cleanHouseOption()">
+              <input
+                type="radio"
+                :id="intoTypeOption.intoTypeId"
+                :value="intoTypeOption.intoTypeValue"
+                v-model="selectedIntoOption"
+              />
+              <label :for="intoTypeOption.intoTypeId">{{ intoTypeOption.text }}</label>
+            </div>
+            <!-- <p>选中的是：{{ selectedIntoOption }}</p> -->
+          </div>
+        </el-form-item>
 
+        <el-form-item v-if="selectedIntoOption == 1 || selectedIntoOption == 3" label="选择房屋" prop="resId">
+          <el-select v-model="resId" placeholder="房屋" clearable multiple style="width: 328px" class="filter-item">
+            <el-option v-for="item in resOptions" :key="item.id" :label="item.resName" :value="item.id" ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button v-if="selectedIntoOption !=null" type="primary" size="mini" @click="createIntoCstQrCode()">
+            生成入住二维码
+        </el-button>
+        <el-button @click="createIntoQrCodeFormVisible = false">
+          取消
+        </el-button>
+        <!-- <el-button type="primary" @click="createIntoQrCodeStatus==='create'?createIntoCstQrCode():updateData()">
+          提交
+        </el-button> -->
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { cstList, createQrCode, saveCstMenu } from '@/api/cst/cst'
+import { cstList, createQrCode, createIntoCstQrCode, saveCstMenu } from '@/api/cst/cst'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { selectMenuMini } from '@/api/user/user-menu'
 import { projectSelect } from '@/api/config/config'
+import { houseSelect} from '@/api/house/house'
+
 
 export default {
   name: 'ComplexTable',
@@ -198,7 +256,14 @@ export default {
   },
   data() {
     return {
-       webExpandedKeys:[],
+      selectedIntoOption: null,
+      intoTypeOptions: [
+        { intoTypeId: '1', intoTypeValue: '0', text: '客户(办公楼)' },
+        { intoTypeId: '2', intoTypeValue: '1', text: '委托人(办公楼)' },
+        { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
+        { intoTypeId: '4', intoTypeValue: '3', text: '住户(住宅)' },
+      ],
+      webExpandedKeys:[],
       webCheckedKeys:[],
       selectedWebCheckedKeys:[],
       weComExpandedKeys:[],
@@ -233,7 +298,14 @@ export default {
       },
       weComTreeData:[],
       dialogFormVisible: false,
+      createIntoQrCodeFormVisible: false,
+      createIntoQrCodeStatus: '',
+      resOptions:null,
+      resId:null,
       imgUrl:'',
+      qrCreateTime:'',
+      qrCutOffTime:'',
+      houseList:null,
       webMenuTree: false,
       menuTree: false,
       dialogStatus: '',
@@ -271,13 +343,13 @@ export default {
     createQrCode(row) {
       this.imgUrl = null;
       this.dialogFormVisible = true
+      row.tagList = null;
       createQrCode(row).then(response => {
         this.imgUrl = response.data.imgUrl
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
       })
-
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -315,6 +387,65 @@ export default {
         status: 'published',
         type: ''
       }
+    },
+
+    // 生成入住二维码
+    createIntoQrcode(row) {
+      // 清空已选择类型
+      this.selectedIntoOption = null;
+      // 清空已选择房屋
+      this.resId = null;
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.createIntoQrCodeStatus = 'create'
+      this.createIntoQrCodeFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['createIntoQrCodedataForm'].clearValidate()
+      })
+      // 获取客户房屋
+      houseSelect(row.code).then(response => {
+        this.resOptions = response.data.list;
+      })      
+    },
+    // 生成客户入住二维码
+    createIntoCstQrCode() {
+      if(this.selectedIntoOption == 1 || this.selectedIntoOption == 3){
+        if(this.resId === null){
+          this.$notify({
+              message: '房屋不能为空！',
+              type: 'error',
+              duration: 2000
+            })
+            return
+          }
+        }        
+      this.imgUrl = null;
+      this.houseList = null;
+      this.qrCreateTime = null;
+      this.qrCutOffTime = null;
+      this.dialogFormVisible = true
+      this.$refs['createIntoQrCodedataForm'].validate((valid) => {
+        if (valid) {
+          this.temp.resId = this.resId;
+          this.temp.cstCode = this.temp.code;
+          this.temp.orgId = this.temp.orgId;
+          this.temp.intoType = this.selectedIntoOption;
+          createIntoCstQrCode(this.temp).then(response => {
+          this.imgUrl = response.data.imgUrl
+          this.houseList = response.data.houseList
+          this.qrCreateTime = response.data.qrCreateTime
+          this.qrCutOffTime = response.data.qrCutOffTime
+          setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+        }
+      })
+    },
+
+    cleanHouseOption(){
+      // 清空已选择房屋
+      this.resId = null;
     },
 
     menuTreeCreate(row) {

@@ -36,6 +36,11 @@
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="客户编号" prop="cstCode" align="center" width="160">
+          <template slot-scope="{row}">
+            <span>{{ row.cstCode }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="客户名称" prop="cstName" align="center" width="180">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>

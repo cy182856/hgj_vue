@@ -34,11 +34,11 @@
           <span>{{ row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客户类型" prop="cstType" align="center" width="100">
+      <!-- <el-table-column label="客户类型" prop="cstType" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.cstType }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="客户名称" prop="cstName" align="center" width="200">
         <template slot-scope="{row}">
           <span>{{ row.cstName }}</span>
@@ -126,10 +126,11 @@
       <div align="center">
         <img :src = imgUrl style="height: 300px;width: 350px;"/>
       </div>
-      <div style="margin-left: 29%; font-size: 14px; width: 305px; font-weight: bold;">{{this.temp.cstName}}</div>   
-      <div style="margin-left: 29%; font-size: 12px; width: 305px; margin-top: 10px;">房间号：{{houseList}}</div>  
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;">生成时间：{{qrCreateTime}}</div>  
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;">有效截止时间：{{qrCutOffTime}}</div> 
+      <div style="margin-left: 29%; font-size: 15px; width: 305px; font-weight: bold;">{{this.temp.cstName}}</div> 
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">入住角色：</span>{{intoRole}}</div>    
+      <div style="margin-left: 29%; font-size: 12px; width: 305px; margin-top: 10px;"><span style="font-weight: bold;">房间号：</span>{{houseList}}</div>  
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">生成时间：</span>{{qrCreateTime}}</div>  
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">有效截止时间：</span>{{qrCutOffTime}}</div> 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
@@ -190,8 +191,8 @@
         <el-form-item class="is_show" label="orgId" prop="orgId">
           <el-input v-model="temp.orgId" />
         </el-form-item>
-        <div style="font-size: 18px;">{{ temp.cstName }}</div>
-        <el-form-item style="margin-top: 20px;" label="入住类型">
+        <div style="font-size: 18px; width: 500px;">{{ temp.cstName }}</div>
+        <el-form-item style="margin-top: 20px;" label="入住角色">
           <div>
             <div v-for="intoTypeOption in intoTypeOptions" :key="intoTypeOption.intoTypeId" @change="cleanHouseOption()">
               <input
@@ -236,7 +237,6 @@ import { selectMenuMini } from '@/api/user/user-menu'
 import { projectSelect } from '@/api/config/config'
 import { houseSelect} from '@/api/house/house'
 
-
 export default {
   name: 'ComplexTable',
   components: { Pagination },
@@ -259,7 +259,7 @@ export default {
       selectedIntoOption: null,
       intoTypeOptions: [
         { intoTypeId: '1', intoTypeValue: '0', text: '客户(办公楼)' },
-        { intoTypeId: '2', intoTypeValue: '1', text: '委托人(办公楼)' },
+        { intoTypeId: '2', intoTypeValue: '1', text: '子客户(办公楼)' },
         { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
         { intoTypeId: '4', intoTypeValue: '3', text: '住户(住宅)' },
       ],
@@ -306,6 +306,7 @@ export default {
       qrCreateTime:'',
       qrCutOffTime:'',
       houseList:null,
+      intoRole:'',
       webMenuTree: false,
       menuTree: false,
       dialogStatus: '',
@@ -423,6 +424,7 @@ export default {
       this.houseList = null;
       this.qrCreateTime = null;
       this.qrCutOffTime = null;
+      this.intoRole = null;
       this.dialogFormVisible = true
       this.$refs['createIntoQrCodedataForm'].validate((valid) => {
         if (valid) {
@@ -435,6 +437,7 @@ export default {
           this.houseList = response.data.houseList
           this.qrCreateTime = response.data.qrCreateTime
           this.qrCutOffTime = response.data.qrCutOffTime
+          this.intoRole = response.data.intoRole
           setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

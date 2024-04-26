@@ -116,10 +116,10 @@
           </el-select>
           </el-form-item>          
         <el-form-item label="开始时间" prop="startTime">
-          <el-input v-model="temp.startTime" placeholder="开始时间" clearable style="width: 300px" class="filter-item"></el-input>
+          <el-input v-model="temp.startTime" placeholder="开始时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
         </el-form-item>
         <el-form-item label="结束时间" prop="endTime">
-          <el-input v-model="temp.endTime" placeholder="结束时间" clearable style="width: 300px" class="filter-item"></el-input>
+          <el-input v-model="temp.endTime" placeholder="结束时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -136,66 +136,43 @@
       </el-dialog>
 
       <el-dialog :title="textMap[grantPreviewStatus]" :visible.sync="grantPreviewFormVisible">
-        <div>11111111111</div>
-
-
         <el-table
         :key="tableKey"
         v-loading="listLoading"
-        :data="list"
+        :data="cstList"
         border
         fit
         highlight-current-row
         style="width: 100%;"
         @sort-change="sortChange"
-      >
-        <el-table-column label="编号" prop="id" align="center" width="180px">
-          <template slot-scope="{row}">
-            <span>{{ row.id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="类型" prop="title" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="小时" prop="hour" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.hour }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="是否有效" prop="isExp" align="center" width="120">
-          <template slot-scope="{row}">
-            <span v-if="row.isExp == 0">是</span>
-            <span v-if="row.isExp == 1">否</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" align="center" width="160px">
-          <template slot-scope="{row}">
-            <span>{{ row.createTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" align="center" width="160px">
-          <template slot-scope="{row}">
-            <span>{{ row.updateTime }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-  
-
-
+        >
+          <el-table-column label="编号" prop="cstCode" align="center" width="150" >
+            <template slot-scope="{row}">
+              <span>{{row.cstCode}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="名称" prop="cstName" align="center" width="" >
+            <template slot-scope="{row}">
+              <span>{{row.cstName}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">        
+          <el-button @click="grantPreviewFormVisible = false">
+            取消
+          </el-button>
+        </div>
       </el-dialog>
-
 
       <el-dialog :title="textMap[grantBatchStatus]" :visible.sync="grantBatchFormVisible">
         <el-table
         :key="tableKey"
-        v-loading="listLoading"
+        v-loading="listBatchLoading"
         :data="grantBatchList"
         border
         fit
         highlight-current-row
-        style="width: 100%;"
+        style="width: 200%;"
         @sort-change="sortChange"
       >
         <el-table-column label="编号" prop="id" align="center" width="180px">
@@ -203,14 +180,14 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="券名称" prop="stopCouponId" align="center" width="120">
+        <el-table-column label="券名称" prop="title" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.stopCouponId }}</span>
+            <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标签" prop="tagId" align="center" width="120">
+        <el-table-column label="标签" prop="name" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.tagId }}</span>
+            <span>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="开始时间" prop="startTime" align="center" width="120">
@@ -233,6 +210,13 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
+          <template slot-scope="{row,$index}">
+            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="batchDelete(row,$index)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       </el-dialog>
@@ -242,12 +226,11 @@
   </template>
   
   <script>
-  import { stopCouponList, stopCouponSave, stopCouponUpdate, stopCouponDelete , stopCouponGrant, stopCouponBatchList} from '@/api/coupon/coupon'
+  import { stopCouponList, stopCouponSave, stopCouponUpdate, stopCouponDelete , stopCouponGrant, stopCouponBatchList, batchDelete} from '@/api/coupon/coupon'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-  import { tagSelect} from '@/api/tag/tag'
+  import { tagSelect, selectCstList} from '@/api/tag/tag'
 
-  
   export default {
     name: 'ComplexTable',
     components: { Pagination },
@@ -273,8 +256,11 @@
         readonly: true,
         tableKey: 0,
         list: null,
+        grantBatchList:null,
+        cstList:null,
         total: 0,
         listLoading: true,
+        listBatchLoading: false,
         listQuery: {
           page: 1,
           limit: 10,
@@ -424,6 +410,7 @@
         this.$nextTick(() => {
           this.$refs['grantDataForm'].clearValidate()
         })
+        this.getList()
       },
       grantBatch(row) {
         this.temp = Object.assign({}, row) // copy obj
@@ -431,19 +418,22 @@
         this.grantBatchFormVisible = true
         stopCouponBatchList(row.id).then(response => {
           this.grantBatchList = response.data.list
-  
-          // Just to simulate the time of the request
+          setTimeout(() => {
+            this.listBatchLoading = false
+          }, 1.5 * 1000)
+        })
+      },
+      grantPreview(row) { 
+        var tagId = this.temp.tagId;
+        this.grantPreviewStatus = 'update'
+        this.grantPreviewFormVisible = true   
+        this.cstList = null;     
+        selectCstList(tagId).then(response => {
+          this.cstList = response.data.list
           setTimeout(() => {
             this.listLoading = false
           }, 1.5 * 1000)
         })
-      },
-      grantPreview(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.temp.timestamp = new Date(this.temp.timestamp)
-        this.grantPreviewStatus = 'update'
-        this.grantPreviewFormVisible = true
-        
       },
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
@@ -520,6 +510,36 @@
                 duration: 2000
             })
               this.list.splice(index, 1)
+              } else {
+                this.$notify({
+                  message: res.data.message,
+                  type: 'error',
+                  duration: 2000          
+                })
+              }
+            });
+          })
+          //取消删除
+          .catch(() => {
+            //alert('取消')
+          });
+      },
+
+      batchDelete(row, index) {
+        this.$confirm('确认删除?', '提示', {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          batchDelete(row.id,).then((res) => {
+            if (res.code == 20000) {
+              this.$notify({
+                title: 'Success',
+                message: 'Delete Successfully',
+                type: 'success',
+                duration: 2000
+            })
+              this.grantBatchList.splice(index, 1)
               } else {
                 this.$notify({
                   message: res.data.message,

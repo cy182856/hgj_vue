@@ -33,6 +33,16 @@ export function stopCouponDelete(id) {
   })
 }
 
+export function batchDelete(id) {
+  console.log("------------ID-----------"+id)
+  return request({
+    url: url + '/stopCoupon/batchDelete',
+    method: 'get',
+    params: { id }
+  })
+}
+
+
 export function stopCouponGrant(data) {
   return request({
     url: url + '/stopCoupon/grant',

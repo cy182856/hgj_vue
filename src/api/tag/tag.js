@@ -25,6 +25,14 @@ export function tagDelete(id) {
   })
 }
 
+export function selectCstList(id) {
+  return request({
+    url: url + '/tag/selectCstList',
+    method: 'get',
+    params: { id }
+  })
+}
+
 export function tagSave(data) {
   return request({
     url: url + '/tag/save',

@@ -110,7 +110,7 @@
         // 公众号
           // 清空已选择楼栋
           this.id = null;
-        // 获取楼栋
+        // 获取公众号
         wechatPubSelect().then(response => {
           this.budOptions = response.data.list;
         }) 

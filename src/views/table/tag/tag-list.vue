@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
+      <el-input v-model="listQuery.name" placeholder="标签名" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -9,6 +9,12 @@
         新增
       </el-button>
     </div>
+
+    
+      <!-- <vue-markdown :html="true">{{htmlMD}}</vue-markdown> -->
+      <!-- <vue-markdown>{{markdownContent}}</vue-markdown> -->
+      <!-- <markdown-it-vue class="md-body" :content="htmlMD" /> -->
+
 
     <el-table
       :key="tableKey"
@@ -20,12 +26,18 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="编号" prop="id" align="center" width="180px">
+      <!-- <el-table-column label="编号" prop="id" align="center" width="180px">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
+      </el-table-column> -->
+      <el-table-column label="类型" prop="id" align="center" width="180px">
+        <template slot-scope="{row}">
+          <span v-if="row.type==0">系统标签</span>
+          <span v-if="row.type==1">自建标签</span>
+        </template>
       </el-table-column>
-      <el-table-column label="名称" prop="name" align="center" width="120">
+      <el-table-column label="标签名" prop="name" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
@@ -42,13 +54,13 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="row.type == 1" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button type="primary" size="mini"  @click="menuTreeCreate(row)">
             选择客户
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!='deleted' && row.type==1" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
@@ -114,9 +126,19 @@ import { tagList, tagSave, tagUpdate, tagDelete , selectCstTree, saveTagCst} fro
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
+// import VueMarkdown from 'vue-markdown'
+// import axios from 'axios'
+
+// import MarkdownItVue from "markdown-it-vue";
+// import "markdown-it-vue/dist/markdown-it-vue.css";
+
+
 export default {
   name: 'ComplexTable',
   components: { Pagination },
+  // components: { VueMarkdown },
+  // components: { MarkdownItVue},
+  
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -133,6 +155,8 @@ export default {
   },
   data() {
     return {
+      // markdownContent: '',
+      // htmlMD: "",
       roleOptions:null,
       serchRoleOptions:null,
       readonly: true,
@@ -209,6 +233,8 @@ export default {
   },
   created() {
     this.getList()
+    // this.fetchMarkdown()
+    // this.loadMarkdown()
   },
   methods: {
     getList() {
@@ -223,6 +249,30 @@ export default {
         }, 1.5 * 1000)
       })
     },
+
+    // fetchMarkdown() {
+    //   // 假设你的Markdown文件位于public目录下
+    //   axios.get('./md.md').then(response => {
+    //     this.markdownContent = response.data
+    //   })
+    // },
+
+    // loadMarkdown() {
+		//     // 假设您有一个本地markdown文件路径
+		//     const markdownPath = './md.md'
+    //         //通过fetch请求将.md文件转化为markdown-it-vue可以解析的字符串
+		//     fetch(markdownPath)
+		// 	    .then(response => response.text())
+		// 	    .then(markdown => {
+        
+		// 		    this.htmlMD = markdown
+		// 	    })
+		// 	    .catch(error => {
+		// 		    console.error('Error loading markdown:', error);
+		// 	    });
+	  //   },
+    
+
     handleFilter() {
       this.listQuery.page = 1
       this.getList()

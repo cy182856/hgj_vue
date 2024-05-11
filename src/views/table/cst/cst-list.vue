@@ -141,7 +141,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="menuTree">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 100%; height: 100%; margin-left:0px;">  
         <el-row :gutter="30">
-          <el-col :span="12">
+          <el-col :span="24">
             <div class="grid-content bg-purple">
               <span>菜单权限</span>
               <el-tree
@@ -156,7 +156,7 @@
               </el-tree>
           </div>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <div class="grid-content bg-purple">
               <span>账单权限</span>
               <el-tree
@@ -170,7 +170,7 @@
                 @check="getCheckedNodes">
               </el-tree>
             </div>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -491,7 +491,7 @@ export default {
       this.getCheckedNodes()
       this.temp.code = this.temp.code
       this.temp.webMenuIds = this.selectedWebCheckedKeys
-      this.temp.weComMenuIds = this.selectedWeComCheckedKeys
+      // this.temp.weComMenuIds = this.selectedWeComCheckedKeys
       saveCstMenu(this.temp).then(() => {
           this.menuTree = false
           this.$notify({
@@ -509,10 +509,10 @@ export default {
       this.selectedWebCheckedKeys = selectedWebMenu.map(item => {
         return item.id;
       });   
-      let selectedWeComMenu = this.$refs.weComTreeForm.getCheckedNodes(false, false); //(leafOnly, includeHalfChecked) 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
-      this.selectedWeComCheckedKeys = selectedWeComMenu.map(item => {
-        return item.id;
-      });  
+      // let selectedWeComMenu = this.$refs.weComTreeForm.getCheckedNodes(false, false); //(leafOnly, includeHalfChecked) 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
+      // this.selectedWeComCheckedKeys = selectedWeComMenu.map(item => {
+      //   return item.id;
+      // });  
     },
  
   }

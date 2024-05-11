@@ -1,3 +1,50 @@
 <template>
-    <div>欢迎使用惠管家</div>
+    <div style="margin-left: 20px;">     
+        <h4>欢迎使用智慧管家</h4>
+        <markdown-it-vue class="md-body" :content="htmlMD" />
+    </div>
 </template>
+
+  <script>
+  import waves from '@/directive/waves' // waves directive
+  import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+
+  import MarkdownItVue from "markdown-it-vue";
+  import "markdown-it-vue/dist/markdown-it-vue.css";
+  
+  export default {
+    name: 'ComplexTable',
+    components: { Pagination },
+    components: { MarkdownItVue},  
+    directives: { waves },
+    
+    data() {
+      return {
+        htmlMD: ""  
+      }
+    },
+    created() {
+      this.loadMarkdown()
+    },
+    methods: {
+        loadMarkdown() {
+            // 假设您有一个本地markdown文件路径
+            const markdownPath = './md.md'
+            //通过fetch请求将.md文件转化为markdown-it-vue可以解析的字符串
+            fetch(markdownPath)
+                .then(response => response.text())
+                .then(markdown => {          
+                    this.htmlMD = markdown
+                }).catch(error => {
+                        console.error('Error loading markdown:', error);
+                    });
+        }    
+    }
+}
+  </script>
+
+
+
+  
+  
+  

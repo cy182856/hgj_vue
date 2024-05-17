@@ -1,29 +1,77 @@
-![**图片链接**](https://github.com/Filecoin-Titan/titan/assets/125969858/09d536d1-59df-4187-b410-c90c74602d6b)
-#  Titan Network - A new incentive system that integrates the world's idle resources
-[Titan Network](https://www.titannet.io/) is a digital resource network that incentivizes matching community idle resources with global demand, making it easy for everyone to leverage the power of DePIN services and participate in the construction of the Internet of Value.
+# 欢迎使用智慧管家
 
+## 功能项
+[1. 员工管理](#1)  
+[2. 角色列表](#2)  
+[3. 房屋列表](#3)  
+[4. 合同列表](#4)  
+[5. 客户档案](#5)  
+[6. 绑定列表](#6)  
+[7. 公众号管理](#/home/#7)  
+[8. 公告管理](#8)  
 
-# Titan Network’s Story
-Titan Network's story begins in the middle of 2021 as the first project to build the retrieval layer and CDN solution for Filecoin. In early 2022, Titan Network was awarded one of the largest grants of $1 Million from the Protocol Labs to develop the tooling for the ecosystem. Together with delivering milestones for the grant, the Titan team realized there is a greater potential for utilizing idle resources on the community side beyond just the provision of a hot storage layer. Ever since then, the team has been dedicating themselves to building a full-resource DePIN network and has received recognition both from the Filecoin ecosystem and leading Web3 startup programs like HK Cyberport. 
+## 
+<a id="1"></a>
+##  1.员工管理
+1.    员工列表  
+设置员工权限信息，首次设置需输入员工手机号并根据员工职责设置相应的角色、所属项目、楼栋等信息。
+2.    通讯录同步  
+根据员工所属组织架构，选择对应的项目通讯录同步。
 
-## Join the Community
-[**Discord**](https://discord.gg/web3depin)
+<a id="2"></a>  
+##  2.角色列表
+1.	角色列表  
+设置角色相对应的权限。如：管家，只需勾选出入认证、报修管理、其他功能即可。
 
-[**Telegram**](https://t.me/titannet_dao)
+<a id="3"></a>  
+##  3.房屋列表
+1.	房屋列表  
+查询房屋的相关信息。如：客户名称、房屋编号、客户编号等。
 
-[**Twitter**](https://twitter.com/Titannet_dao)
+<a id="4"></a> 
+##  4.合同列表
+1.	合同列表  
+查询合同的相关信息。如：合同编码、合同开始/结束时间等。
 
-## Run L2-Edge Node
+<a id="5"></a>  
+##  5.客户档案
+1.	客户档案  
+客户信息由系统自动从思源同步过来。生成入住二维码：根据客户属性选择相应角色生产二维码，客户扫码登录之后即可使用小程序。权限设置：根据客户属性开通小程序上相应可以使用的功能权限（如：报事报修、物业缴费等）。
 
-[**Install and Earn**](https://titannet.gitbook.io/titan-network-en/huygens-testnet/installation-and-earnings)
+<a id="6"></a>  
+##  6.绑定列表
+1.	绑定列表  
+当客户扫描入住二维码登录之后在次就会有绑定信息，当客户发生退租等情况，这里可以解除绑定。
 
-[**安装赚取收益**](https://titannet.gitbook.io/titan-network-cn/huygens-testnet/an-zhuang-cheng-xu-zhuan-qu)
+<a id="7"  href="#"></a>  
+##  7.公众号管理
+1.	公众号列表  
+可新增/修改绑定公众号信息。  
 
-## Dashboard
-[**Huygens Testnet**](https://test1.titannet.io/)
+2.	公众号菜单  
+可新增/修改公众号菜单功能信息。  
 
-## Docs
-[**EN**](https://titannet.gitbook.io/titan-network-en)
+3.	公众号菜单同步  
+当新增完公众号菜单后，勾选所选增加菜单的公众号，新增菜单即同步到公众号上。
 
-[**中文**](https://titannet.gitbook.io/titan-network-cn)
+<a id="8"></a>  
+##  8.公告管理
+1.	公告类型  
+新增/编辑公告类型，如：系统通知、物业公告等。  
 
+2.	公告列表  
+点更新之后系统自动拉取公众号发布的内容，编辑选择分类之后，点击发布即可推送。
+
+## 使用举例  
+### 1.	用户入住  
+1.进入【客户档案】菜单  
+
+2.在需要入户的客户那一行操作列中，点击【生成入住二维码】  
+
+3.入住角色分为4种，选择合适的角色。其中：  
+1)  客户(办公楼)：适用于办公楼租户，选择此角色，客户扫码后将绑定该客户名下所有的房间。  
+2)  子客户(办公楼)：适用于办公楼租户，选择此角色需要选择该客户名下部分房间，客户扫码后将绑定选择的房间。  
+3)  产权人(住宅)：适用于小区业主，选择此角色，客户扫码后将绑定该客户名下所有的房间。  
+4)  住户(住宅)：适用于小区业主，选择此角色需要选择该客户名下部分房间，客户扫码后将绑定选择的房间。  
+
+4.点击【生成入住二维码】后，可将此二维码给到客户，使用维修扫码即可入住。该二维码有效时间为5小时。 

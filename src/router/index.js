@@ -63,9 +63,15 @@ export const constantRoutes = [
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
   },
+  // {
+  //   path: '/404',
+  //   component: () => import('@/views/error-page/404'),
+  //   hidden: true
+  // },
   {
     path: '/404',
-    component: () => import('@/views/error-page/404'),
+    //component: () => import('@/views/home/index'),
+    redirect : '/',
     hidden: true
   },
   {
@@ -82,7 +88,7 @@ export const constantRoutes = [
         path: 'home',
         component: () => import('@/views/home/index'),
         name: 'home',
-        meta: { title: '惠管家', icon: 'guide', affix: false }
+        meta: { title: '智慧管家', icon: 'guide', affix: false }
       }
     ]
   },

@@ -296,7 +296,7 @@ export default {
         type: '',
         status: 'published'
       },
-      weComTreeData:[],
+      //weComTreeData:[],
       dialogFormVisible: false,
       createIntoQrCodeFormVisible: false,
       createIntoQrCodeStatus: '',
@@ -469,17 +469,17 @@ export default {
         this.webCheckedKeys = response.data.webCheckedKeys
         // 客户账单权限赋值
         // this.weComTreeData = response.data.weComTreeData
-        this.weComTreeData = [
-          {
-            id: 1,
-            label: '缴费',
+      //   this.weComTreeData = [
+      //     {
+      //       id: 1,
+      //       label: '缴费',
             
-          }, {
-            id: 2,
-            label: '开票',
+      //     }, {
+      //       id: 2,
+      //       label: '开票',
           
-          }
-      ],
+      //     }
+      // ],
 
       this.weComExpandedKeys = response.data.weComExpandedKeys
       this.weComCheckedKeys = response.data.weComCheckedKeys

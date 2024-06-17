@@ -23,9 +23,9 @@ export function userSyncOfw() {
   })
 }
 
-export function userSyncFx() {
+export function userSync() {
   return request({
-    url: url + '/user/sync/fx',
+    url: url + '/user/sync',
     method: 'get'
   })
 }
@@ -58,6 +58,14 @@ export function fetchPv(pv) {
 export function saveUser(data) {
   return request({
     url: url + '/user/save',
+    method: 'post',
+    data
+  })
+}
+
+export function updatePassword(data) {
+  return request({
+    url: url + '/user/updatePassword',
     method: 'post',
     data
   })

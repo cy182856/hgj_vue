@@ -1,33 +1,33 @@
 import request from '@/utils/request'
 import { url } from '@/utils/url'
 
-export function stopCouponList(query) {
+export function couponList(query) {
   return request({
-    url: url + '/stopCoupon/list',
+    url: url + '/coupon/list',
     method: 'get',
     params: query
   })
 }
 
-export function stopCouponBatchList(id) {
+export function couponBatchList(id) {
   return request({
-    url: url + '/stopCoupon/batchList',
+    url: url + '/coupon/batchList',
     method: 'get',
     params: { id }
   })
 }
 
-export function stopCouponSelect() {
+export function couponSelect() {
   return request({
-    url: url + '/stopCoupon/select',
+    url: url + '/coupon/select',
     method: 'get'
   })
 }
 
-export function stopCouponDelete(id) {
+export function couponDelete(id) {
   console.log("------------ID-----------"+id)
   return request({
-    url: url + '/stopCoupon/delete',
+    url: url + '/coupon/delete',
     method: 'get',
     params: { id }
   })
@@ -36,32 +36,32 @@ export function stopCouponDelete(id) {
 export function batchDelete(id) {
   console.log("------------ID-----------"+id)
   return request({
-    url: url + '/stopCoupon/batchDelete',
+    url: url + '/coupon/batchDelete',
     method: 'get',
     params: { id }
   })
 }
 
 
-export function stopCouponGrant(data) {
+export function couponGrant(data) {
   return request({
-    url: url + '/stopCoupon/grant',
+    url: url + '/coupon/grant',
     method: 'post',
     data
   })
 }
 
-export function stopCouponSave(data) {
+export function couponSave(data) {
   return request({
-    url: url + '/stopCoupon/save',
+    url: url + '/coupon/save',
     method: 'post',
     data
   })
 }
 
-export function stopCouponUpdate(data) {
+export function couponUpdate(data) {
   return request({
-    url: url + '/stopCoupon/save',
+    url: url + '/coupon/save',
     method: 'post',
     data
   })

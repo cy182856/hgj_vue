@@ -31,10 +31,21 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column> -->
+      <el-table-column label="项目" prop="proName" align="center" width="120">
+        <template slot-scope="{row}">
+          <span>{{ row.proName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="类型" prop="id" align="center" width="180px">
         <template slot-scope="{row}">
           <span v-if="row.type==0">系统标签</span>
           <span v-if="row.type==1">自建标签</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="范围" prop="id" align="center" width="180px">
+        <template slot-scope="{row}">
+          <span v-if="row.range==1">客户</span>
+          <span v-if="row.range==2">个人</span>
         </template>
       </el-table-column>
       <el-table-column label="标签名" prop="name" align="center" width="120">
@@ -54,13 +65,16 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.type == 1" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button type="primary" size="mini"  @click="menuTreeCreate(row)">
+          <el-button v-if="row.range == 1" type="primary" size="mini"  @click="menuTreeCreate(row)">
             选择客户
-          </el-button>
-          <el-button v-if="row.status!='deleted' && row.type==1" size="mini" type="danger" @click="handleDelete(row,$index)">
+          </el-button>     
+          <el-button v-if="row.range == 2" type="primary" size="mini"  @click="menuTreeCreatePerson(row)">
+            选择个人
+          </el-button>   
+          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
@@ -76,6 +90,17 @@
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" placeholder="名称" clearable style="width: 300px" class="filter-item"></el-input>
+        </el-form-item>
+        <el-form-item label="项目" prop="proNum">
+          <el-select v-model="temp.proNum" placeholder="项目" clearable style="width: 300px" class="filter-item">
+            <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择范围" prop="range">
+          <el-select v-model="temp.range" placeholder="范围" clearable style="width: 300px" class="filter-item">
+            <el-option label="客户" :value="1" />
+            <el-option label="个人" :value="2" />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -118,13 +143,45 @@
       </div>
     </el-dialog>
 
+    <el-dialog :title="textMap[personDialogStatus]" :visible.sync="personTree">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 100%; height: 100%; margin-left:0px;">  
+        <el-row :gutter="30">
+          <el-col :span="24">
+            <div class="grid-content bg-purple">
+              <span>个人选择</span>
+              <el-tree
+                :data="personTreeData"
+                show-checkbox
+                node-key="id"
+                ref="personWebTreeForm"
+                :default-expanded-keys=personTagExpandedKeys
+                :default-checked-keys=personTagCheckedKeys
+                :props="defaultProps"
+                @check="personGetCheckedNodes">
+              </el-tree>
+          </div>
+          </el-col>    
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="personTree = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="personDialogStatus==='个人选择'?personCreateCstData():updateData()">
+          提交
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { tagList, tagSave, tagUpdate, tagDelete , selectCstTree, saveTagCst} from '@/api/tag/tag'
+import { tagList, tagSave, tagUpdate, tagDelete , selectCstTree, selectCstTreePerson, saveTagCst} from '@/api/tag/tag'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { projectSelect } from '@/api/config/config'
+
 
 // import VueMarkdown from 'vue-markdown'
 // import axios from 'axios'
@@ -157,6 +214,7 @@ export default {
     return {
       // markdownContent: '',
       // htmlMD: "",
+      projectOptions:null,
       roleOptions:null,
       serchRoleOptions:null,
       readonly: true,
@@ -183,7 +241,9 @@ export default {
       },
       dialogFormVisible: false,
       cstTree: false,
+      personTree: false,
       dialogStatus: '',
+      personDialogStatus: '',
       textMap: {
         update: 'Edit',
         create: 'Create'
@@ -195,6 +255,7 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false,
+      personTreeData: [{}],
       cstTreeData: [{
 
         //   id: 1,
@@ -235,6 +296,7 @@ export default {
     this.getList()
     // this.fetchMarkdown()
     // this.loadMarkdown()
+    this.getSelectList()
   },
   methods: {
     getList() {
@@ -250,6 +312,13 @@ export default {
       })
     },
 
+    // 获取下拉菜单数据
+    getSelectList(){
+      // 项目
+      projectSelect().then(response => {
+        this.projectOptions = response.data.list
+      })  
+    },
     // fetchMarkdown() {
     //   // 假设你的Markdown文件位于public目录下
     //   axios.get('./md.md').then(response => {
@@ -325,6 +394,22 @@ export default {
             })
             return
           }
+          if(this.temp.proNum == null || this.temp.proNum == "" || this.temp.proNum == "undefined"){
+            this.$notify({
+              message: '项目不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+          }
+          if(this.temp.range == null || this.temp.range == "" || this.temp.range == "undefined"){
+            this.$notify({
+              message: '选择范围不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+          }
           tagSave(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -355,6 +440,30 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          if(this.temp.name == null || this.temp.name == "" || this.temp.name == "undefined"){
+            this.$notify({
+              message: '名称不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+          }
+          if(this.temp.proNum == null || this.temp.proNum == "" || this.temp.proNum == "undefined"){
+            this.$notify({
+              message: '项目不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+          }
+          if(this.temp.range == null || this.temp.range == "" || this.temp.range == "undefined"){
+            this.$notify({
+              message: '选择范围不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+          }
           tagUpdate(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
@@ -400,6 +509,7 @@ export default {
         });
     },
 
+    // 选择客户
     menuTreeCreate(row) {
       this.resetTemp()
       this.dialogStatus = '客户选择'
@@ -412,6 +522,7 @@ export default {
       //this.tagCheckedKeys=[1]
       // 查询员工权限菜单
       this.temp.tagId = row.id
+      this.temp.proNum = row.proNum
       selectCstTree(this.temp).then((response) => {
         // web菜单赋值
         this.cstTreeData = response.data.cstTreeData
@@ -421,11 +532,37 @@ export default {
       
     },
 
-    
+    // 选择个人
+    menuTreeCreatePerson(row) {
+      this.resetTemp()
+      this.personDialogStatus = '个人选择'
+      this.personTree = true
+      this.$nextTick(() => {
+        this.$refs['personDataForm'].clearValidate()
+      })
+      this.temp.tagId = row.id
+      this.temp.proNum = row.proNum
+      selectCstTreePerson(this.temp).then((response) => {
+        // web菜单赋值
+        this.personTreeData = response.data.personTreeData
+        this.personTagExpandedKeys = response.data.tagExpandedKeys
+        this.personTagCheckedKeys=response.data.tagCheckedKeys       
+      })
+      
+    },
+  
     //获取用户勾选的客户编号用于传参后台
     getCheckedNodes() {
       let selectedCstCode = this.$refs.webTreeForm.getCheckedNodes(true, true); //(leafOnly, includeHalfChecked) 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
       this.selectedCstCheckedKeys = selectedCstCode.map(item => {
+        return item.id;
+      });   
+    },
+
+    //获取用户勾选的个人微信号用于传参后台
+    personGetCheckedNodes() {
+      let selectedWxOpenId = this.$refs.personWebTreeForm.getCheckedNodes(true, true); //(leafOnly, includeHalfChecked) 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
+      this.personSelectedCstCheckedKeys = selectedWxOpenId.map(item => {
         return item.id;
       });   
     },
@@ -436,6 +573,21 @@ export default {
       this.temp.cstCodes = this.selectedCstCheckedKeys
       saveTagCst(this.temp).then(() => {
           this.cstTree = false
+          this.$notify({
+            title: 'Success',
+            message: 'Created Successfully',
+            type: 'success',
+            duration: 2000          
+          })
+      })
+    },
+
+    personCreateCstData() {
+      this.personGetCheckedNodes()
+      this.temp.id = this.temp.tagId
+      this.temp.wxOpenIds = this.personSelectedCstCheckedKeys
+      saveTagCst(this.temp).then(() => {
+          this.personTree = false
           this.$notify({
             title: 'Success',
             message: 'Created Successfully',

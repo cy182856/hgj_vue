@@ -1,8 +1,8 @@
 <template>
     <div class="app-container">
       <div class="filter-container">
-        <el-input v-model="listQuery.cstName" placeholder="客户" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
-        <el-input v-model="listQuery.title" placeholder="停车券" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
+        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
+        <el-input v-model="listQuery.title" placeholder="券类型" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
         <el-select v-model="listQuery.tagId" placeholder="选择标签" clearable style="width: 300px" class="filter-item">
             <el-option v-for="item in tagOptions" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
@@ -81,7 +81,7 @@
   </template>
   
   <script>
-  import { stopCouponGrantList, stopCouponGrantSave, stopCouponGrantUpdate, stopCouponGrantDelete , stopCouponGrantGrant} from '@/api/coupon/coupon-grant'
+  import { couponGrantList, couponGrantSave, couponGrantUpdate, couponGrantDelete , couponGrantGrant} from '@/api/coupon/coupon-grant'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect} from '@/api/tag/tag'
@@ -157,7 +157,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        stopCouponGrantList(this.listQuery).then(response => {
+        couponGrantList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   
@@ -226,7 +226,7 @@
               })
               return
             }
-            stopCouponGrantSave(this.temp).then(() => {
+            couponGrantSave(this.temp).then(() => {
               this.list.unshift(this.temp)
               this.dialogFormVisible = false
               this.getList()
@@ -249,7 +249,7 @@
           cancelButtonText: "取消",
           type: "warning",
         }).then(() => {
-          stopCouponGrantDelete(row.id,).then((res) => {
+          couponGrantDelete(row.id,).then((res) => {
             if (res.code == 20000) {
               this.$notify({
                 title: 'Success',
@@ -302,5 +302,5 @@
       background-color: #f9fafc;
     }
   </style>
-  @/api/gonggao/stopCouponGrant
+  @/api/gonggao/couponGrant
   

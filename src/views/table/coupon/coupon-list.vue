@@ -129,7 +129,7 @@
           <el-button @click="grantFormVisible = false">
             取消
           </el-button>
-          <el-button type="primary" @click="grantStatus==='create'?createData():stopCouponGrant()">
+          <el-button type="primary" @click="grantStatus==='create'?createData():couponGrant()">
             提交
           </el-button>
         </div>
@@ -226,7 +226,7 @@
   </template>
   
   <script>
-  import { stopCouponList, stopCouponSave, stopCouponUpdate, stopCouponDelete , stopCouponGrant, stopCouponBatchList, batchDelete} from '@/api/coupon/coupon'
+  import { couponList, couponSave, couponUpdate, couponDelete , couponGrant, couponBatchList, batchDelete} from '@/api/coupon/coupon'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect, selectCstList} from '@/api/tag/tag'
@@ -307,7 +307,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        stopCouponList(this.listQuery).then(response => {
+        couponList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   
@@ -377,7 +377,7 @@
               })
               return
             }
-            stopCouponSave(this.temp).then(() => {
+            couponSave(this.temp).then(() => {
               this.list.unshift(this.temp)
               this.dialogFormVisible = false
               this.getList()
@@ -416,7 +416,7 @@
         this.temp = Object.assign({}, row) // copy obj
         this.temp.timestamp = new Date(this.temp.timestamp)
         this.grantBatchFormVisible = true
-        stopCouponBatchList(row.id).then(response => {
+        couponBatchList(row.id).then(response => {
           this.grantBatchList = response.data.list
           setTimeout(() => {
             this.listBatchLoading = false
@@ -440,7 +440,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            stopCouponUpdate(tempData).then(() => {
+            couponUpdate(tempData).then(() => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
               this.dialogFormVisible = false
@@ -460,7 +460,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            stopCouponUpdate(tempData).then(() => {
+            couponUpdate(tempData).then(() => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
               this.dialogFormVisible = false
@@ -475,12 +475,12 @@
         })
       },
 
-      stopCouponGrant() {
+      couponGrant() {
         this.$refs['grantDataForm'].validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) 
-            stopCouponGrant(tempData).then(() => {
+            couponGrant(tempData).then(() => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
               this.grantFormVisible = false
@@ -501,7 +501,7 @@
           cancelButtonText: "取消",
           type: "warning",
         }).then(() => {
-          stopCouponDelete(row.id,).then((res) => {
+          couponDelete(row.id,).then((res) => {
             if (res.code == 20000) {
               this.$notify({
                 title: 'Success',
@@ -584,5 +584,5 @@
       background-color: #f9fafc;
     }
   </style>
-  @/api/gonggao/stopCoupon
+  @/api/gonggao/coupon
   

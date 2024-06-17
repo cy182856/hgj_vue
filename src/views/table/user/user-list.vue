@@ -2,12 +2,13 @@
   <div class="app-container">
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
+      <el-input v-model="listQuery.corpName" placeholder="企业" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.roleName" placeholder="角色" clearable style="width: 300px" class="filter-item">
+      <el-select v-model="listQuery.roleName" placeholder="角色" clearable style="width: 200px" class="filter-item">
           <el-option value="无角色" ></el-option>
           <el-option v-for="item in serchRoleOptions" :key="item.id" :label="item.roleName" :value="item.roleName" />
       </el-select>
-      <el-select v-model="listQuery.deptName" placeholder="部门" clearable style="width: 300px" class="filter-item">
+      <el-select v-model="listQuery.deptName" placeholder="部门" clearable style="width: 200px" class="filter-item">
           <el-option v-for="item in serchDeptNameOptions" :key="item.deptName" :label="item.deptName" :value="item.deptName" />
       </el-select>
       <el-input v-model="listQuery.mobile" placeholder="电话" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -34,6 +35,11 @@
       <el-table-column label="所属项目" prop="projectName" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.projectName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="所属企业" prop="corpName" align="center" width="120">
+        <template slot-scope="{row}">
+          <span>{{ row.corpName }}</span>
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip='true' label="所属楼栋" prop="budNameUnit" align="center" width="160">

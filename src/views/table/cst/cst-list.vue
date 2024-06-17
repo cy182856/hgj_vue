@@ -127,7 +127,7 @@
         <img :src = imgUrl style="height: 300px;width: 350px;"/>
       </div>
       <div style="margin-left: 29%; font-size: 15px; width: 305px; font-weight: bold;">{{this.temp.cstName}}</div> 
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">入住角色：</span>{{intoRole}}</div>    
+      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">入住身份：</span>{{intoRole}}</div>    
       <div style="margin-left: 29%; font-size: 12px; width: 305px; margin-top: 10px;"><span style="font-weight: bold;">房间号：</span>{{houseList}}</div>  
       <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">生成时间：</span>{{qrCreateTime}}</div>  
       <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">有效截止时间：</span>{{qrCutOffTime}}</div> 
@@ -192,7 +192,7 @@
           <el-input v-model="temp.orgId" />
         </el-form-item>
         <div style="font-size: 18px; width: 500px;">{{ temp.cstName }}</div>
-        <el-form-item style="margin-top: 20px;" label="入住角色">
+        <el-form-item style="margin-top: 20px;" label="入住身份">
           <div>
             <div v-for="intoTypeOption in intoTypeOptions" :key="intoTypeOption.intoTypeId" @change="cleanHouseOption()">
               <input
@@ -259,7 +259,7 @@ export default {
       selectedIntoOption: null,
       intoTypeOptions: [
         { intoTypeId: '1', intoTypeValue: '0', text: '客户(办公楼)' },
-        { intoTypeId: '2', intoTypeValue: '1', text: '子客户(办公楼)' },
+        { intoTypeId: '2', intoTypeValue: '1', text: '员工(办公楼)' },
         { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
         { intoTypeId: '4', intoTypeValue: '3', text: '住户(住宅)' },
       ],

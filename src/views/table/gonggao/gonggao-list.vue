@@ -136,12 +136,11 @@
 </template>
 
 <script>
-import { gonggaoUpdateRelease,gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow } from '@/api/gonggao/gonggao'
+import { gonggaoUpdateRelease, gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow } from '@/api/gonggao/gonggao'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { projectSelect } from '@/api/config/config'
 import { gonggaoTypeSelect } from '@/api/gonggao/gonggaoType'
-
 
 export default {
   name: 'ComplexTable',

@@ -57,6 +57,15 @@ export function selectCstTree(query) {
   })
 }
 
+export function selectCstTreePerson(query) {
+  return request({
+    url: url + '/tag/selectCstTreePerson',
+    method: 'get',
+    params: query
+  })
+}
+
+
 export function saveTagCst(data) {
   return request({
     url: url + '/tag/saveTagCst',

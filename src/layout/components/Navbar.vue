@@ -1,5 +1,6 @@
 <template>
   <div class="navbar">
+
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
@@ -17,6 +18,14 @@
         </el-tooltip> -->
 
       </template>
+
+      <el-dropdown class="right-menu-item hover-effect" trigger="click">
+        <div class="avatar-wrapper">
+          <el-dropdown-item divided @click.native="editPassword">
+            <span style="display:block;">修改密码</span>
+          </el-dropdown-item>
+        </div>
+      </el-dropdown>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
@@ -45,6 +54,28 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <div>
+      <el-dialog :visible.sync="dialogFormVisible">
+        <el-form ref="dataForm" style="margin-left: 10%;"> 
+          <el-form-item label="旧密码" prop="oldPassword">
+            <el-input v-model="temp.oldPassword" placeholder="旧密码" maxlength="10" clearable style="width: 400px" class="filter-item"></el-input>
+          </el-form-item>
+          <el-form-item label="新密码" prop="newPassword">
+            <el-input v-model="temp.newPassword" placeholder="新密码" maxlength="10" clearable style="width: 400px" class="filter-item"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="createData()">
+            提交
+          </el-button>
+        </div>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
@@ -56,6 +87,9 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+
+import { updatePassword } from '@/api/user/user-manage'
+
 
 export default {
   components: {
@@ -73,6 +107,15 @@ export default {
       'device'
     ])
   },
+  data() {
+    return {
+      dialogFormVisible: false,
+      temp: {
+        oldPassword: '',
+        newPassword: ''
+      },
+    }
+  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -80,7 +123,45 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    async editPassword() {
+      this.temp.oldPassword = null
+      this.temp.newPassword = null
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    async createData() {
+      if(this.temp.oldPassword == null || this.temp.oldPassword == "" || this.temp.oldPassword == "undefined"){
+        this.$notify({
+              message: '旧密码不能为空！',
+              type: 'error',
+              duration: 2000          
+        })
+        return  
+      }
+      if(this.temp.newPassword == null || this.temp.newPassword == "" || this.temp.oldPanewPasswordssword == "undefined"){
+        this.$notify({
+              message: '新密码不能为空！',
+              type: 'error',
+              duration: 2000          
+        })
+        return  
+      }
+      updatePassword(this.temp).then(() => {
+        this.dialogFormVisible = false
+        this.$notify({
+          title: 'Success',
+          message: 'Update Successfully',
+          type: 'success',
+          duration: 2000          
+        })    
+      })         
+        
     }
+
+
   }
 }
 </script>

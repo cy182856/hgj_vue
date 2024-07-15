@@ -41,6 +41,14 @@ export function gonggaoNotIsShow(id) {
   })
 }
 
+export function gonggaoView(id) {
+  return request({
+    url: url + '/gonggao/view',
+    method: 'get',
+    params: { id }
+  })
+}
+
 export function gonggaoIsShow(id) {
   console.log("------------ID-----------"+id)
   return request({

@@ -1,4 +1,14 @@
 import request from '@/utils/request'
+import { url } from '@/utils/url'
+
+
+export function saveContent(data) {
+  return request({
+    url: url + '/gonggao/saveContent',
+    method: 'post',
+    data
+  })
+}
 
 export function fetchList(query) {
   return request({

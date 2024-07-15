@@ -136,11 +136,14 @@
 </template>
 
 <script>
-import { gonggaoUpdateRelease, gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow } from '@/api/gonggao/gonggao'
+import { gonggaoUpdateRelease, gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow, gonggaoView } from '@/api/gonggao/gonggao'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { projectSelect } from '@/api/config/config'
 import { gonggaoTypeSelect } from '@/api/gonggao/gonggaoType'
+import { url } from '@/utils/url'
+import axios from 'axios'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 
 export default {
   name: 'ComplexTable',
@@ -342,7 +345,54 @@ export default {
     },
 
     gonggaoView(row, index){
-      window.open(row.url, "_blank");
+        if(row.source == 1){
+          window.open(row.url, "_blank");
+        }else{         
+          // gonggaoView(row.id).then(response => response.blob()) // 将响应转换为Blob
+          // .then(blob => {
+          //   // 创建一个指向文件的URL
+          //   const fileUrl = URL.createObjectURL(blob);
+          //   // 打开新窗口并导航到文件URL
+          //   window.open(fileUrl);
+          // }).catch(error => console.error('下载文件出错:', error));
+
+        axios({
+        url:  url + '/gonggao/view',
+        method: "POST",
+        params:{fileId:row.id},
+        headers: {
+          'X-Token': getToken()
+         },
+        responseType: 'blob' // 表明返回服务器返回的数据类型
+      }).then((response) => {
+          // 获取文件名
+          // let dispositionArr = dispositionStr.split(";");
+          // let fileName = decodeURIComponent(dispositionArr[1]);
+          // fileName = fileName.split("=")[1];
+          var blob = new Blob([response.data], {
+            // type: "application/file",
+            type: "text/html;charset=utf-8"
+          });
+          // const  a = document.createElement("a");
+          // a.download = row.fileName;
+          // a.style.display = 'none';
+          // a.href = URL.createObjectURL(blob);
+          // document.body.appendChild(a);
+          // a.click();
+          // URL.revokeObjectURL(a.href);
+          // document.body.removeChild(a);
+          let url = window.URL.createObjectURL(blob);
+          window.open(url);
+          // let aLink = document.createElement("a");
+          // aLink.style.display = "none";
+          // aLink.href = url;
+          // aLink.setAttribute("download", row.fileName); // 下载的文件
+          // document.body.appendChild(aLink);
+          // aLink.click();
+          // document.body.removeChild(aLink);
+          // window.URL.revokeObjectURL(url);
+        })
+      }     
     },
 
     gonggaoIsShow(row, index) {

@@ -1,6 +1,13 @@
 <template>
   <div class="div-container" style="margin-left: 20px;">
     <el-form ref="article" :model="article" label-width="auto" size="small">
+
+      <el-form-item label="项目" prop="proNum" style="margin-top: 20px;">
+          <el-select v-model="temp.proNum" placeholder="项目" clearable style="width: 300px" class="filter-item">
+            <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+          </el-select>
+      </el-form-item>
+
       <el-form-item label="标题">
         <el-input
           v-model="article.title"
@@ -8,6 +15,8 @@
           placeholder="请输入文章标题"
         ></el-input>
       </el-form-item>
+
+      
 
       <el-form-item label="内容">
         <div style="z-index: 1001; border: 1px solid #ccc">
@@ -45,11 +54,12 @@
 </template>
 <script>
 // import { getClassifyList } from "@/api/classify/index";
-import { getArticle, addArticle, updateArticle } from "@/api/article";
+import { getArticle, addArticle, updateArticle, saveContent } from "@/api/article";
 import { addImage, deleteImage } from "@/api/Media/image";
 //import { addVideo, deleteVideo } from "@/api/Media/video";
 //import { fileConvertBase64 } from "@/utils/util";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { projectSelect } from '@/api/config/config';
 
 export default {
   name: "edit-article",
@@ -58,6 +68,9 @@ export default {
     return {
       id: {
         type: [Number, null],
+      },
+      temp: {
+        
       },
       isEdit: false,
       titleArr: [],
@@ -76,6 +89,7 @@ export default {
         coverImage: "", //base64码
         isDelete: false,
       },
+      projectOptions:null,
       savedImages: [],
       currentImages: [],
       classifyArray: [], //分类数据
@@ -97,7 +111,6 @@ export default {
               formData.append("Image", file);
               try {
                 const response = await addImage(formData);
-                alert(response)
                 if (response.code === -1) {
                   this.$message.error("调用上传图片接口调用异常！");
                   return;
@@ -148,6 +161,7 @@ export default {
     };
   },
   created() {
+    this.getSelectList();
     // 对参数进行处理
    // this.getClassifyList();
     // 在 articleManage 组件中
@@ -177,6 +191,16 @@ export default {
     //       console.log(err);
     //     });
     // },
+
+    // 获取下拉菜单数据
+    getSelectList(){
+      // 项目
+      projectSelect().then(response => {
+        this.projectOptions = response.data.list
+      })  
+    },
+
+
     getArticle() {
       getArticle(this.id)
         .then((result) => {
@@ -196,15 +220,13 @@ export default {
     },
     // 保存文章
     saveArticle() {
-      alert(this.article.title + "-----------" + this.article.content)
+      // alert(this.article.title + "-----------" + this.article.content)
       if (this.article.classifyId > 0) {
         this.article.classifyName = this.classifyArray.find(
           (f) => f.id == this.article.classifyId
         ).name;
-       alert(this.article);
       }
       this.currentImages = this.editor.getElemsByType("image");
-      alert(this.currentImages)
       for (const img of this.savedImages) {
         console.log("所有上传的图片：" + img);
       }
@@ -249,23 +271,23 @@ export default {
         }
       }
 
-      // let zhengwen = JSON.parse(JSON.stringify(this.article.content));
-      // let links = ""; // 存储链接文本
-      // if (this.hArr) {
-      //   this.hArr.forEach((item, i) => {
-      //     // 替换文章标签
-      //     let itemArr = item.split("");
-      //     itemArr.splice(3, 0, ` id="mao${i}"`);
-      //     let xinItem = itemArr.join("");
-      //     zhengwen = zhengwen.replace(item, xinItem);
-      //     // 构建链接文本
-      //     links += `<li><a href="#miao${i}">${item}</a></li>`;
-      //   });
-      // }
-      // if (links != "") zhengwen = `<ul>${links}</ul>` + zhengwen; // 在开头添加链接文本
+      let zhengwen = JSON.parse(JSON.stringify(this.article.content));
+      let links = ""; // 存储链接文本
+      if (this.hArr) {
+        this.hArr.forEach((item, i) => {
+          // 替换文章标签
+          let itemArr = item.split("");
+          itemArr.splice(3, 0, ` id="mao${i}"`);
+          let xinItem = itemArr.join("");
+          zhengwen = zhengwen.replace(item, xinItem);
+          // 构建链接文本
+          links += `<li><a href="#miao${i}">${item}</a></li>`;
+        });
+      }
+      if (links != "") zhengwen = `<ul>${links}</ul>` + zhengwen; // 在开头添加链接文本
 
-      // this.article.content = zhengwen;
-      // console.log("save", zhengwen);
+      this.article.content = zhengwen;
+      console.log("save", zhengwen);
 
       this.article.isDelete = false;
       if (this.isEdit) {
@@ -282,16 +304,31 @@ export default {
             this.$message.error(err);
           });
       } else {
-        addArticle(this.article)
+        this.article.proNum = this.temp.proNum;
+        if(this.temp.proNum == null || this.temp.proNum == "" || this.temp.proNum == "undefined"){
+            this.$notify({
+              message: '项目不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+        }
+        if(this.article.title == null || this.article.title == "" || this.article.title == "undefined"){
+            this.$notify({
+              message: '标题不能为空！',
+              type: 'error',
+              duration: 2000          
+            })
+            return
+        }
+        saveContent(this.article)
           .then((result) => {
-            if (result.code == 200) {
-              if (result.data) {
+            if (result.code == 20000) {           
                 this.$message.success(result.message);
                 this.resetArticle();
-                this.$router.push("/articleManage");
-              } else {
+                this.$router.push('/table/gonggao/gonggao-list');                            
+            }else{
                 this.$message.error(result.message);
-              }
             }
           })
           .catch((err) => {

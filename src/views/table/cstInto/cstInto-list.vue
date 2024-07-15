@@ -1,25 +1,47 @@
 <template>
     <div class="app-container">
       <div class="filter-container">
-        <el-select v-model="listQuery.projectNum" placeholder="项目" clearable style="width: 200px" class="filter-item">
+        <el-select v-model="listQuery.projectNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
-        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 200px; margin-left: 5px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
-        <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
-        <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 200px" class="filter-item">
+        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
             <el-option label="客户" :value="0" />
-            <el-option label="委托人" :value="1" />
+            <el-option label="员工" :value="1" />
             <el-option label="产权人" :value="2" />
             <el-option label="住户" :value="3" />
         </el-select>
-        <el-select v-model="listQuery.intoStatus" placeholder="状态" clearable style="width: 200px; margin-left: 5px;" class="filter-item">
+        <el-select v-model="listQuery.intoStatus" placeholder="状态" clearable style="width: 140px;" class="filter-item">
             <el-option label="未入住" :value="0" />
             <el-option label="已入住" :value="1" />
             <el-option label="已解绑" :value="2" />
             <el-option label="待审核" :value="3" />
         </el-select>
+        <el-date-picker
+          value-format="yyyy-MM-dd"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.startTime"
+          type="date"
+          placeholder="开始日期"
+          >
+        </el-date-picker>
+
+        <el-date-picker
+          value-format="yyyy-MM-dd"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.endTime"
+          type="date"
+          placeholder="结束日期"
+        >
+        </el-date-picker>
         <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
           查询
+        </el-button>
+        <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+          导出
         </el-button>
       </div>
   
@@ -53,15 +75,20 @@
             <span>{{ row.userName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="身份" prop="intoRole" align="center" width="100">
+        <el-table-column label="身份" prop="intoRoleName" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.intoRoleName }}</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="身份" prop="intoRole" align="center" width="100">
           <template slot-scope="{row}">
             <span v-if = "row.intoRole == 0">客户</span>
-            <span v-if = "row.intoRole == 1">委托人</span>
+            <span v-if = "row.intoRole == 1">员工</span>
             <span v-if = "row.intoRole == 2">产权人</span>
             <span v-if = "row.intoRole == 3">住户</span>
           </template>
-        </el-table-column>
-        <el-table-column label="状态" prop="intoStatus" align="center" width="100">
+        </el-table-column> -->
+        <!-- <el-table-column label="状态" prop="intoStatus" align="center" width="100">
           <template slot-scope="{row}">
             <span v-if="row.intoStatus == 0 && (row.intoRole == 0 || row.intoRole == 2)">未入住</span>
             <span v-if="row.intoStatus == 1 && (row.intoRole == 0 || row.intoRole == 2)">已入住</span>
@@ -72,6 +99,11 @@
             <span v-if="row.houseIntoStatus == 2 && (row.intoRole == 1 || row.intoRole == 3)">已解绑</span>   
             <span v-if="row.houseIntoStatus == 3 && (row.intoRole == 1 || row.intoRole == 3)">待审核</span>
         
+          </template>
+        </el-table-column> -->
+        <el-table-column label="状态" prop="intoStatusName" align="center" width="150">
+          <template slot-scope="{row}">
+            <span>{{ row.intoStatusName }}</span>
           </template>
         </el-table-column>
         <el-table-column label="房间号" prop="resName" align="center" width="150">
@@ -213,6 +245,33 @@
           }, 1.5 * 1000)
         })
       },
+
+      handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['项目名称','客户名称','姓名','身份','状态','房间号','创建时间','更新时间']
+        const filterVal = ['projectName','cstName','userName','intoRoleName','intoStatusName','resName', 'createTime','updateTime']
+        const data = this.formatJson(filterVal)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '入住统计'
+        })
+        this.downloadLoading = false
+      })
+    },
+
+    formatJson(filterVal) {
+      console.log("this.list-------------"+this.list)
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+
       handleFilter() {
         this.listQuery.page = 1
         this.getList()

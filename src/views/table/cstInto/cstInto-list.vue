@@ -106,11 +106,24 @@
             <span>{{ row.intoStatusName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="房间号" prop="resName" align="center" width="150">
+        <!-- <el-table-column label="房间号" prop="resName" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.resName }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
+        <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="160">
+          <template slot-scope="{row}">
+            <span v-if="row.intoRole == 0 || row.intoRole == 2">
+              <span v-for=" (val, key) in row.houseList" :key="key">
+                    <span v-if="row.houseList.length > 1">{{ val }},</span>
+                    <span v-if="row.houseList.length == 1">{{ val }}</span>
+              </span>
+            </span>
+            <span v-if="row.intoRole == 1 || row.intoRole == 3">
+              <span>{{ row.resName }}</span>
+            </span>
+          </template>
+      </el-table-column>
         <!-- <el-table-column label="入住状态" prop="resName" align="center" width="150">
           <template slot-scope="{row}">
             <span v-if = "row.intoStatus == 0">未入住</span>

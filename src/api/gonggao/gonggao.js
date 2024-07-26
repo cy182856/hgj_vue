@@ -8,6 +8,14 @@ export function gonggaoUpdateRelease() {
   })
 }
 
+export function getGonggao(id) {
+  return request({
+    url: url + '/gonggao/get',
+    method: 'get',
+    params: { id }
+  })
+}
+
 export function gonggaoList(query) {
   return request({
     url: url + '/gonggao/list',

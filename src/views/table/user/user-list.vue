@@ -2,16 +2,21 @@
   <div class="app-container">
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
-      <el-input v-model="listQuery.corpName" placeholder="企业" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.roleName" placeholder="角色" clearable style="width: 200px" class="filter-item">
+      <el-select v-model="listQuery.projectNum" placeholder="所属项目" clearable style="width: 190px" class="filter-item">
+          <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+      </el-select>
+      <el-select v-model="listQuery.corpId" placeholder="所属企业" clearable style="width: 190px" class="filter-item">
+          <el-option v-for="item in corpOptions" :key="item.corpId" :label="item.corpName" :value="item.corpId" />
+      </el-select>  
+      <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 190px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.roleName" placeholder="角色" clearable style="width: 190px" class="filter-item">
           <el-option value="无角色" ></el-option>
           <el-option v-for="item in serchRoleOptions" :key="item.id" :label="item.roleName" :value="item.roleName" />
       </el-select>
-      <el-select v-model="listQuery.deptName" placeholder="部门" clearable style="width: 200px" class="filter-item">
+      <el-select v-model="listQuery.deptName" placeholder="部门" clearable style="width: 190px" class="filter-item">
           <el-option v-for="item in serchDeptNameOptions" :key="item.deptName" :label="item.deptName" :value="item.deptName" />
       </el-select>
-      <el-input v-model="listQuery.mobile" placeholder="电话" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.mobile" placeholder="电话" style="width: 190px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>
@@ -84,6 +89,17 @@
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
+      <!-- <el-table-column label="企微二维码" prop="qrCode" align="center" width="180">
+        <template v-if="row.qrCode != null" slot-scope="{ row }">
+          <img :src="row.qrCode" alt="Base64 Image" height="250" width="200" />
+        </template>     
+      </el-table-column>       -->
+      <el-table-column label="企微二维码" prop="qrCode" align="center" width="100">
+        <template slot-scope="{row}">
+          <span v-if="row.qrCode != null">已上传</span>
+          <span v-if="row.qrCode == null">未上传</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" width="160px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime }}</span>
@@ -94,7 +110,7 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="80" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -102,6 +118,9 @@
           <!-- <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button> -->
+          <el-button type="primary" size="mini" @click="handleUpload(row)">
+            上传二维码
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -153,6 +172,46 @@
       </div>
     </el-dialog>
 
+    <!-- 文件上传框 -->
+    <el-dialog :title="Upload" :visible.sync="uploadMode">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="100px"
+        style="width: 600px; height: 100%; margin-left: 60px"
+      >
+        <el-upload
+          :limit="1"
+          class="upload-demo"
+          ref="upload"
+          action
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :file-list="fileList"
+          :auto-upload="false"
+          :http-request="UploadSubmit"
+          :before-upload="handleImagesUrlBefore"
+        >
+          <el-button slot="trigger" size="small" type="primary"
+            >选取文件</el-button
+          >
+          <el-button
+            style="margin-left: 10px"
+            size="small"
+            type="success"
+            @click="submitUpload"
+            >上传到服务器</el-button
+          >
+          <div slot="tip" class="el-upload__tip">请上传1M以内的文件！</div>
+        </el-upload>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="uploadMode = false"> 取消 </el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="webMenuTree">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; height: 100%; margin-left:50px;">
 
@@ -194,11 +253,14 @@
 <script>
 import { userList, saveUser, updateUser, deptSelect } from '@/api/user/user-manage'
 import { roleSelect } from '@/api/role/role-info'
-import { projectSelect } from '@/api/config/config'
+import { projectSelect, corpSelect } from '@/api/config/config'
 import { budSelect } from '@/api/build/build'
 import { selectUserWebMenu } from '@/api/user/user-menu'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { getToken } from "@/utils/auth";
+import axios from "axios";
+import { url } from "@/utils/url";
 
 export default {
   name: 'ComplexTable',
@@ -224,6 +286,7 @@ export default {
       selectedWebCheckedKeys:[],
       roleOptions:null,
       projectOptions:null,
+      corpOptions:null,
       budOptions:null,
       serchRoleOptions:null,
       serchDeptNameOptions:null,
@@ -232,6 +295,8 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      uploadMode: false,
+      userKey: null,
       listQuery: {
         page: 1,
         limit: 10,
@@ -319,6 +384,93 @@ export default {
         }, 1.5 * 1000)
       })
     },
+
+    handleUpload(row) {
+      this.uploadMode = true;
+      this.userKey = row.id;
+    },
+
+    handleImagesUrlBefore: function (file) {
+      var _this = this;
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          var image = new Image();
+          image.onload = function () {
+            var width = this.width;
+            var height = this.height;
+            if (width > 600 || width < 100) {
+              _this.$alert("图片宽度必须在100~1200之间！", "提示", {
+                confirmButtonText: "确定",
+              });
+              reject();
+            }
+            if (height > 800 || height < 100) {
+              _this.$alert("图片高度必须在100~3000之间！", "提示", {
+                confirmButtonText: "确定",
+              });
+              reject();
+            }
+            resolve();
+          };
+          image.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    },
+
+    UploadSubmit(param) {
+      var file = param.file;
+      if (file.size > 1000000) {
+        this.$notify({
+          title: "error",
+          message: "上传文件不能超过1M！",
+          type: "error",
+          duration: 3000,
+        });
+        return;
+      }
+
+      const suffix =
+        file.type === "image/jpg" ||
+        file.type === "image/png" ||
+        file.type === "image/jpeg";
+      if (!suffix) {
+        this.$message.error("只能上传图片！");
+        return reject(false);
+      }
+
+      // console.log(param.file);
+      var file_form = new FormData(); //获取上传表单（文件）
+      file_form.append("file", file);
+      axios({
+        url: url + "/user/file/upload",
+        method: "POST",
+        params: {
+          userKey: this.userKey,
+          dirNum: this.dirNum,
+        },
+        // timeout: 200000,
+        headers: {
+          "X-Token": getToken(),
+        },
+        data: file_form,
+      })
+        .then((res) => {
+          if (res.data.code == 20000) {
+            window.location.reload();
+          }
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    submitUpload() {
+      this.$refs.upload.submit();
+    },
+
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
@@ -364,6 +516,10 @@ export default {
       // 项目
       projectSelect().then(response => {
         this.projectOptions = response.data.list
+      })  
+      // 企业
+      corpSelect().then(response => {
+        this.corpOptions = response.data.list
       })  
     },
     mapBuild(list){

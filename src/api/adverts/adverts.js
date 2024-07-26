@@ -59,11 +59,3 @@ export function advertsSave(data) {
     data
   })
 }
-
-export function updateSumInfo(data) {
-  return request({
-    url: url + '/sum/info/save',
-    method: 'post',
-    data
-  })
-}

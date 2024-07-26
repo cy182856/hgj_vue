@@ -8,3 +8,17 @@ export function projectSelect() {
     method: 'get'
   })
 }
+
+export function project() {
+  return request({
+    url: url + '/config/project',
+    method: 'get'
+  })
+}
+
+export function corpSelect() {
+  return request({
+    url: url + '/config/corp',
+    method: 'get'
+  })
+}

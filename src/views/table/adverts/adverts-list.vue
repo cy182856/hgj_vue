@@ -93,9 +93,9 @@
           <img :src="row.imgPath" alt="Base64 Image" height="150" width="150" />
         </template>
       </el-table-column>
-      <el-table-column label="广告链接" prop="url" align="center" width="180">
+      <el-table-column label="广告地址" prop="pathName" align="center" width="180">
         <template slot-scope="{ row }">
-          <span>{{ row.url }}</span>
+          <span>{{ row.pathName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否显示" prop="isShow" align="center" width="120">
@@ -191,15 +191,23 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="广告链接" prop="url">
-          <el-input
-            v-model="temp.url"
-            placeholder="广告链接"
+        <el-form-item label="广告地址" prop="advertsPathId" style="margin-top: 20px">
+          <el-select
+            v-model="temp.advertsPathId"
+            placeholder="广告地址"
             clearable
             style="width: 300px"
             class="filter-item"
-          ></el-input>
+          >
+            <el-option
+              v-for="item in advertsPathOptions"
+              :key="item.id"
+              :label="item.pathName"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false"> 取消 </el-button>
@@ -351,7 +359,8 @@
 </template>
 
 <script>
-import {advertsList,fetchPv,advertsSave,updateSumInfo,advertsDelete,advertsIsShow,advertsNotIsShow} from "@/api/adverts/adverts";
+import {advertsList,fetchPv,advertsSave,advertsDelete,advertsIsShow,advertsNotIsShow} from "@/api/adverts/adverts";
+import {advertsPathSelect} from "@/api/adverts/advertsPath";
 import { getToken } from "@/utils/auth";
 import { projectSelect } from "@/api/config/config";
 import waves from "@/directive/waves"; // waves directive
@@ -365,6 +374,7 @@ export default {
   components: { Pagination },
   directives: { waves },
   projectOptions: null,
+  advertsPathOptions: null,
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -431,7 +441,7 @@ export default {
       pvData: [],
       rules: {
         proNum: [
-          { required: true, message: "proNum is required", trigger: "change" },
+          { required: true, message: "项目不能为空！", trigger: "change" },
         ],
         timestamp: [
           {
@@ -442,7 +452,10 @@ export default {
           },
         ],
         title: [
-          { required: true, message: "title is required", trigger: "blur" },
+          { required: true, message: "标题不能为空！", trigger: "blur" },
+        ],
+        advertsPathId: [
+          { required: true, message: "广告地址不能为空！", trigger: "blur" },
         ],
       },
       downloadLoading: false,
@@ -507,6 +520,11 @@ export default {
       projectSelect().then((response) => {
         this.projectOptions = response.data.list;
       });
+      // 广告地址
+      advertsPathSelect().then((response) => {
+        this.advertsPathOptions = response.data.list;
+      });
+
     },
     handleCreate() {
       this.resetTemp();
@@ -521,30 +539,30 @@ export default {
       this.advertsId = row.id;
     },
     createData() {
-      if (
-        this.temp.proNum == null ||
-        this.temp.proNum == "" ||
-        this.temp.proNum == "undefined"
-      ) {
-        this.$notify({
-          message: "项目不能为空！",
-          type: "error",
-          duration: 2000,
-        });
-        return;
-      }
-      if (
-        this.temp.title == null ||
-        this.temp.title == "" ||
-        this.temp.title == "undefined"
-      ) {
-        this.$notify({
-          message: "标题不能为空！",
-          type: "error",
-          duration: 2000,
-        });
-        return;
-      }
+      // if (
+      //   this.temp.proNum == null ||
+      //   this.temp.proNum == "" ||
+      //   this.temp.proNum == "undefined"
+      // ) {
+      //   this.$notify({
+      //     message: "项目不能为空！",
+      //     type: "error",
+      //     duration: 2000,
+      //   });
+      //   return;
+      // }
+      // if (
+      //   this.temp.title == null ||
+      //   this.temp.title == "" ||
+      //   this.temp.title == "undefined"
+      // ) {
+      //   this.$notify({
+      //     message: "标题不能为空！",
+      //     type: "error",
+      //     duration: 2000,
+      //   });
+      //   return;
+      // }
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
           advertsSave(this.temp).then(() => {
@@ -573,30 +591,30 @@ export default {
       });
     },
     updateData() {
-      if (
-        this.temp.proNum == null ||
-        this.temp.proNum == "" ||
-        this.temp.proNum == "undefined"
-      ) {
-        this.$notify({
-          message: "项目不能为空！",
-          type: "error",
-          duration: 2000,
-        });
-        return;
-      }
-      if (
-        this.temp.title == null ||
-        this.temp.title == "" ||
-        this.temp.title == "undefined"
-      ) {
-        this.$notify({
-          message: "标题不能为空！",
-          type: "error",
-          duration: 2000,
-        });
-        return;
-      }
+      // if (
+      //   this.temp.proNum == null ||
+      //   this.temp.proNum == "" ||
+      //   this.temp.proNum == "undefined"
+      // ) {
+      //   this.$notify({
+      //     message: "项目不能为空！",
+      //     type: "error",
+      //     duration: 2000,
+      //   });
+      //   return;
+      // }
+      // if (
+      //   this.temp.title == null ||
+      //   this.temp.title == "" ||
+      //   this.temp.title == "undefined"
+      // ) {
+      //   this.$notify({
+      //     message: "标题不能为空！",
+      //     type: "error",
+      //     duration: 2000,
+      //   });
+      //   return;
+      // }
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp);
@@ -633,6 +651,7 @@ export default {
                 duration: 2000,
               });
               this.list.splice(index, 1);
+              this.getList();
             } else {
               alert(res.msg);
             }
@@ -800,6 +819,7 @@ export default {
           console.log(err);
         });
     },
+    
     fileDown(row) {
       axios({
         url: url + "/sum/info/file/download",

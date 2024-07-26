@@ -8,8 +8,11 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="updateRelease">
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="updateRelease">
         更新
+      </el-button> -->
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="gonggaoAdd">
+        新增
       </el-button>
     </div>
 
@@ -23,17 +26,17 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="编号" prop="id" align="center" width="180px">
+      <el-table-column label="编号" prop="id" align="center" width="185px">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目号" prop="proNum" align="center" width="120">
+      <el-table-column label="项目" prop="proName" align="center" width="120">
         <template slot-scope="{row}">
-          <span>{{ row.proNum }}</span>
+          <span>{{ row.proName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="类型" prop="typeName" align="center" width="150">
+      <el-table-column label="类型" prop="typeName" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.typeName }}</span>
         </template>
@@ -43,7 +46,7 @@
           <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="作者" prop="author" align="center" width="120">
+      <!-- <el-table-column label="作者" prop="author" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
@@ -62,18 +65,18 @@
         <template slot-scope="{row}">
           <span>{{ row.isDeleted }}</span>
         </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip='true' label="url" prop="url" align="center" width="120">
+      </el-table-column> -->
+      <!-- <el-table-column :show-overflow-tooltip='true' label="url" prop="url" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.url}}</span>
         </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip='true' label="封面地址" prop="thumbUrl" align="center" width="120">
+      </el-table-column> -->
+      <!-- <el-table-column :show-overflow-tooltip='true' label="封面地址" prop="thumbUrl" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.thumbUrl}}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="是否显示" prop="isShow" align="center" width="120">
+      </el-table-column> -->
+      <el-table-column label="发布状态" prop="isShow" align="center" width="120">
         <template slot-scope="{row}">
           <span v-if="row.isShow == 0">已发布</span>
           <span v-if="row.isShow == 1">未发布</span>
@@ -89,7 +92,7 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="400" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="row.isShow == 1" type="primary" size="mini" @click="gonggaoIsShow(row)">
             发布
@@ -98,7 +101,10 @@
             撤回
           </el-button>
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+            分类
+          </el-button>
+          <el-button v-if="row.source == 2" type="primary" size="mini" @click="contentUpdate(row)">
+            内容
           </el-button>
           <el-button type="primary" size="mini" @click="gonggaoView(row)">
             查看
@@ -311,6 +317,11 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+
+    contentUpdate(row) {
+      this.$router.push('/table/gonggao/gonggao-add?id='+ row.id);
+    },
+
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -342,6 +353,10 @@ export default {
             })
             this.getList()
           })
+    },
+
+    gonggaoAdd(){
+      this.$router.push('/table/gonggao/gonggao-add');
     },
 
     gonggaoView(row, index){

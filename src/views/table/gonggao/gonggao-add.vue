@@ -14,9 +14,7 @@
           autocomplete="off"
           placeholder="请输入文章标题"
         ></el-input>
-      </el-form-item>
-
-      
+      </el-form-item> 
 
       <el-form-item label="内容">
         <div style="z-index: 1001; border: 1px solid #ccc">
@@ -38,22 +36,16 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" style="margin-left: 40px; height: 100px;">
-      <el-button @click="resetArticle" icon="el-icon-close" size="small"
-        >重 置</el-button
-      >
-      <el-button
-        type="success"
-        @click="saveArticle"
-        icon="el-icon-check"
-        size="small"
-      >
-        确 定
-      </el-button>
+      <el-button @click="resetArticle" icon="el-icon-close" size="small">重 置</el-button>
+      <el-button type="success" @click="saveArticle" icon="el-icon-check" size="small"> 确 定 </el-button>
+      <el-button @click="returnArticle" icon="el-icon" size="small" style="margin-left: 80%;">返 回</el-button>
     </div>
   </div>
 </template>
 <script>
 // import { getClassifyList } from "@/api/classify/index";
+import { getGonggao } from '@/api/gonggao/gonggao'
+
 import { getArticle, addArticle, updateArticle, saveContent } from "@/api/article";
 import { addImage, deleteImage } from "@/api/Media/image";
 //import { addVideo, deleteVideo } from "@/api/Media/video";
@@ -101,30 +93,30 @@ export default {
 
         MENU_CONF: {
           uploadImage: {
-            maxFileSize: 10 * 1024 * 1024, // 单个文件的最大体积限制，默认为 2M
+            maxFileSize: 1 * 1024 * 1024, // 单个文件的最大体积限制，默认为 1M
             allowedFileTypes: ["image/*"], // 选择文件时的类型限制，默认为 ['image/*']
-            // base64LimitSize: 50 * 1024, // 小于该值就插入 base64 格式（而不上传），默认为 0
+            base64LimitSize: 1 * 1024 * 1024, // 小于该值就插入 base64 格式（而不上传），默认为 0
             timeout: 5 * 1000, // 超时时间，默认为 10 秒
             // 自定义上传
-            customUpload: async (file, insertFn) => {
-              const formData = new FormData();
-              formData.append("Image", file);
-              try {
-                const response = await addImage(formData);
-                if (response.code === -1) {
-                  this.$message.error("调用上传图片接口调用异常！");
-                  return;
-                }
-                this.savedImages.push(this.$cosImageUrl + response.data.url);
-                insertFn(
-                  this.$cosImageUrl + response.data.url,
-                  response.data.alt,
-                  response.data.href
-                );
-              } catch (error) {
-                this.$message.error("调用上传图片接口调用异常:" + error);
-              }
-            },
+            // customUpload: async (file, insertFn) => {
+            //   const formData = new FormData();
+            //   formData.append("Image", file);
+            //   try {
+            //     const response = await addImage(formData);
+            //     if (response.code === -1) {
+            //       this.$message.error("调用上传图片接口调用异常！");
+            //       return;
+            //     }
+            //     this.savedImages.push(this.$cosImageUrl + response.data.url);
+            //     insertFn(
+            //       this.$cosImageUrl + response.data.url,
+            //       response.data.alt,
+            //       response.data.href
+            //     );
+            //   } catch (error) {
+            //     this.$message.error("调用上传图片接口调用异常:" + error);
+            //   }
+            // },
           },
           uploadVideo: {
             fieldName: "video",
@@ -168,8 +160,16 @@ export default {
     if (this.$route.query.id) {
       this.id = this.$route.query.id;
       console.log("查看id" + this.id);
-      this.isEdit = true;
-      this.getArticle();
+
+      getGonggao(this.id).then(response => {
+        this.budOptions = response.data.gonggao
+        this.temp.proNum = response.data.gonggao.proNum;
+        this.article.title = response.data.gonggao.title;
+        this.article.content = response.data.gonggao.content;
+      }) 
+      
+      //this.isEdit = true;
+     // this.getArticle();
     }
   },
   methods: {
@@ -304,6 +304,7 @@ export default {
             this.$message.error(err);
           });
       } else {
+        this.article.id = this.$route.query.id;
         this.article.proNum = this.temp.proNum;
         if(this.temp.proNum == null || this.temp.proNum == "" || this.temp.proNum == "undefined"){
             this.$notify({
@@ -354,6 +355,10 @@ export default {
       this.article.browseCount = 0;
       this.article.content = ""; //清空文本编辑器内容
       // console.log(this.article);
+    },
+    //返回
+    returnArticle() {
+      this.$router.push('/table/gonggao/gonggao-list');
     },
     onCreated(editor) {
       this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错

@@ -51,6 +51,14 @@
           </span>
         </template>
       </el-table-column>
+      <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="160">
+          <template slot-scope="{row}">
+            <span v-for=" (val, key) in row.houseList" :key="key">
+                  <span v-if="row.houseList.length > 1">{{ val }},</span>
+                  <span v-if="row.houseList.length == 1">{{ val }}</span>
+              </span>          
+          </template>
+      </el-table-column>
       <!-- <el-table-column label="证件号码" prop="cerNo" align="center" width="160">
         <template slot-scope="{row}">
           <span>{{ row.cerNo }}</span>
@@ -234,7 +242,7 @@ import { cstList, createQrCode, createIntoCstQrCode, saveCstMenu } from '@/api/c
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { selectMenuMini } from '@/api/user/user-menu'
-import { projectSelect } from '@/api/config/config'
+import { project } from '@/api/config/config'
 import { houseSelect} from '@/api/house/house'
 
 export default {
@@ -374,7 +382,7 @@ export default {
     // 获取下拉菜单数据
     getSelectList(){
       // 项目
-      projectSelect().then(response => {
+      project().then(response => {
         this.projectOptions = response.data.list
       })  
     },

@@ -115,8 +115,7 @@
           <template slot-scope="{row}">
             <span v-if="row.intoRole == 0 || row.intoRole == 2">
               <span v-for=" (val, key) in row.houseList" :key="key">
-                    <span v-if="row.houseList.length > 1">{{ val }},</span>
-                    <span v-if="row.houseList.length == 1">{{ val }}</span>
+                    <span>{{ val }}&nbsp;&nbsp;</span>
               </span>
             </span>
             <span v-if="row.intoRole == 1 || row.intoRole == 3">

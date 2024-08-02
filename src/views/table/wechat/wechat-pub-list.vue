@@ -43,6 +43,11 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="原始ID" prop="originalId" align="center" width="180">
+        <template slot-scope="{row}">
+          <span>{{ row.originalId }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="appId" prop="appId" align="center" width="180">
         <template slot-scope="{row}">
           <span>{{ row.appId }}</span>
@@ -90,6 +95,9 @@
         </el-form-item>
         <el-form-item label="公众号名称" prop="name">
           <el-input v-model="temp.name" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
+        </el-form-item>
+        <el-form-item label="原始ID" prop="originalId">
+          <el-input v-model="temp.originalId" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
         </el-form-item>
         <el-form-item label="appId" prop="appId">
           <el-input v-model="temp.appId" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
@@ -172,6 +180,7 @@ export default {
         proNum: [{ required: true, message: 'proNum is required', trigger: 'change' }],
         proName: [{ required: true, message: 'proName is required', trigger: 'change' }],
         name: [{ required: true, message: 'name is required', trigger: 'change' }],
+        originalId:[{ required: true, message: 'name is originalId', trigger: 'change' }],
         appId: [{ required: true, message: 'appId is required', trigger: 'change' }],
         appSecret: [{ required: true, message: 'appSecret is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],

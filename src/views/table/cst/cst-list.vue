@@ -47,15 +47,14 @@
       <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="160">
         <template slot-scope="{row}">
           <span v-for=" (val, key) in row.tagList" :key="key">
-                 {{ val.name }},
+                 {{ val.name }}&nbsp;&nbsp;
           </span>
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="160">
           <template slot-scope="{row}">
             <span v-for=" (val, key) in row.houseList" :key="key">
-                  <span v-if="row.houseList.length > 1">{{ val }},</span>
-                  <span v-if="row.houseList.length == 1">{{ val }}</span>
+                  <span>{{ val }}&nbsp;&nbsp;</span>
               </span>          
           </template>
       </el-table-column>

@@ -92,7 +92,7 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="400" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="450" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="row.isShow == 1" type="primary" size="mini" @click="gonggaoIsShow(row)">
             发布
@@ -105,6 +105,9 @@
           </el-button>
           <el-button v-if="row.source == 2" type="primary" size="mini" @click="contentUpdate(row)">
             内容
+          </el-button>
+          <el-button v-if="row.source == 2" type="primary" size="mini" @click="gonggaoSendMsg(row)">
+            发送消息
           </el-button>
           <el-button type="primary" size="mini" @click="gonggaoView(row)">
             查看
@@ -142,7 +145,7 @@
 </template>
 
 <script>
-import { gonggaoUpdateRelease, gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow, gonggaoView } from '@/api/gonggao/gonggao'
+import { gonggaoUpdateRelease, gonggaoList, gonggaoSave, gonggaoUpdate, gonggaoDelete, gonggaoIsShow, gonggaoNotIsShow, gonggaoView, gonggaoSendMsg } from '@/api/gonggao/gonggao'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { projectSelect } from '@/api/config/config'
@@ -465,6 +468,36 @@ export default {
           });
         })
         //取消删除
+        .catch(() => {
+          //alert('取消')
+        });
+    },
+
+    gonggaoSendMsg(row, index) {
+      this.$confirm('确认发送消息?', '提示', {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        gonggaoSendMsg(row.id,).then((res) => {
+          if (res.code == 20000) {
+            this.$notify({
+              title: 'Success',
+              message: '发送成功',
+              type: 'success',
+              duration: 2000
+          })
+          this.getList()
+            } else {
+              this.$notify({
+                message: res.data.message,
+                type: 'error',
+                duration: 2000          
+              })
+            }
+          });
+        })
+        //取消发送
         .catch(() => {
           //alert('取消')
         });

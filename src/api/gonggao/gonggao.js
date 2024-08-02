@@ -49,6 +49,15 @@ export function gonggaoNotIsShow(id) {
   })
 }
 
+export function gonggaoSendMsg(id) {
+  console.log("------------ID-----------"+id)
+  return request({
+    url: url + '/gonggao/sendMsg',
+    method: 'get',
+    params: { id }
+  })
+}
+
 export function gonggaoView(id) {
   return request({
     url: url + '/gonggao/view',

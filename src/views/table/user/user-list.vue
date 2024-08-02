@@ -50,7 +50,7 @@
       <el-table-column :show-overflow-tooltip='true' label="所属楼栋" prop="budNameUnit" align="center" width="160">
         <template slot-scope="{row}">
           <span v-for=" (val, key) in row.buildList" :key="key">
-                 {{ val.budNameUnit }},
+                 {{ val.budNameUnit }}&nbsp;&nbsp;
           </span>
         </template>
       </el-table-column>
@@ -204,7 +204,7 @@
             @click="submitUpload"
             >上传到服务器</el-button
           >
-          <div slot="tip" class="el-upload__tip">请上传1M以内的文件！</div>
+          <div slot="tip" class="el-upload__tip">请上传600*800且大小不超过1M的图片！</div>
         </el-upload>
       </el-form>
       <div slot="footer" class="dialog-footer">

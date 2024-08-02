@@ -47,6 +47,14 @@ export function wechatPubMenuSelect() {
   })
 }
 
+export function wechatPubAddUser(data) {
+  return request({
+    url: url + '/wechatPub/addUser',
+    method: 'post',
+    data
+  })
+}
+
 export function wechatPubAddMenu(data) {
   return request({
     url: url + '/wechatPub/addMenu',

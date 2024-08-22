@@ -57,42 +57,38 @@
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
 
-        <el-table-column label="项目名称" prop="projectName" align="center" width="180">
+        <el-table-column label="项目名称" prop="projectName" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.projectName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报修单号" prop="repairNum" align="center" width="180">
+        <el-table-column label="报修单号" prop="repairNum" align="center" width="130">
           <template slot-scope="{row}">
             <span>{{ row.repairNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户编号" prop="cstCode" align="center" width="120">
+        <el-table-column label="客户编号" prop="cstCode" align="center" width="110">
           <template slot-scope="{row}">
             <span>{{ row.cstCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" prop="cstName" align="center" width="300">
+        <el-table-column label="客户名称" prop="cstName" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="手机号" prop="mobile" align="center" width="160">
-          <template slot-scope="{row}">
-            <span>{{ row.mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="报修类型" prop="quesType" align="center" width="120">
+        
+        <el-table-column label="报修类型" prop="quesType" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.quesType }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报修位置" prop="workPos" align="center" width="200">
+        <el-table-column label="报修位置" prop="workPos" align="center" width="180">
           <template slot-scope="{row}">
             <span>{{ row.workPos }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报修描述" prop="repairDesc" align="center" width="120">
+        <el-table-column label="报修描述" prop="repairDesc" align="center" width="180">
           <template slot-scope="{row}">
             <span>{{ row.repairDesc }}</span>        
           </template>
@@ -106,52 +102,64 @@
             <span v-if="row.repairStatus == 'WOSta_Close'">已关闭</span>
           </template>
         </el-table-column> -->
-        <el-table-column label="报修状态" prop="repairStatus" align="center" width="120">
+        <el-table-column label="报修状态" prop="repairStatus" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.repairStatusName }}</span> 
           </template>
         </el-table-column>
-        <el-table-column label="评分" prop="repairScore" align="center" width="120">
+       
+        <el-table-column label="提交人" prop="userName" align="center" width="60">
           <template slot-scope="{row}">
-            <span>{{ row.repairScore }}</span>
+            <span>{{ row.userName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="评论" prop="repairMsg" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.repairMsg }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="接单人" prop="orders" align="center" width="120">
+        <el-table-column label="接单人" prop="orders" align="center" width="60">
           <template slot-scope="{row}">
             <span>{{ row.orders }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="人工费" prop="labourCost" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.labourCost }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="物料费" prop="materialCost" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.materialCost }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="接单时间" width="160px" align="center">
+        
+        <el-table-column label="接单时间" width="140px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.ordersTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="完工时间" width="160px" align="center">
+        <el-table-column label="完工时间" width="140px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.completionTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" width="160px" align="center">
+        <el-table-column label="评分" prop="repairScore" align="center" width="50">
+          <template slot-scope="{row}">
+            <span>{{ row.repairScore }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="评论" prop="repairMsg" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.repairMsg }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="手机号" prop="mobile" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="人工费" prop="labourCost" align="center" width="60">
+          <template slot-scope="{row}">
+            <span>{{ row.labourCost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="物料费" prop="materialCost" align="center" width="60">
+          <template slot-scope="{row}">
+            <span>{{ row.materialCost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" width="140px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" width="160px" align="center">
+        <el-table-column label="更新时间" width="140px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.updateTime }}</span>
           </template>
@@ -265,8 +273,8 @@
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['项目名称','报修单号','客户编号','客户名称','手机号','报修类型','报修位置','报修描述','报修状态','评分', '评论', '接单人', '人工费','物料费','接单时间','完工时间','创建时间','更新时间']
-        const filterVal = ['projectName','repairNum','cstCode','cstName','cstMobile','quesType','workPos', 'repairDesc','repairStatusName', 'repairScore','repairMsg','orders','labourCost','materialCost','ordersTime','completionTime','createTime','updateTime']
+        const tHeader = ['项目名称','报修单号','客户编号','客户名称','手机号','报修类型','报修位置','报修描述','报修状态','评分', '评论', '提交人','接单人', '人工费','物料费','接单时间','完工时间','创建时间','更新时间']
+        const filterVal = ['projectName','repairNum','cstCode','cstName','cstMobile','quesType','workPos', 'repairDesc','repairStatusName', 'repairScore','repairMsg','userName','orders','labourCost','materialCost','ordersTime','completionTime','createTime','updateTime']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

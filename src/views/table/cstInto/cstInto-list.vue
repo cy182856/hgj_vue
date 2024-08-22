@@ -7,14 +7,14 @@
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
-            <el-option label="客户" :value="0" />
-            <el-option label="员工" :value="1" />
+            <el-option label="租户" :value="0" />
+            <el-option label="租户员工" :value="1" />
             <el-option label="产权人" :value="2" />
-            <el-option label="住户" :value="3" />
+            <el-option label="租客" :value="3" />
         </el-select>
-        <el-select v-model="listQuery.intoStatus" placeholder="状态" clearable style="width: 140px;" class="filter-item">
-            <el-option label="未入住" :value="0" />
-            <el-option label="已入住" :value="1" />
+        <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 140px;" class="filter-item">
+            <el-option label="未注册" :value="0" />
+            <el-option label="已注册" :value="1" />
             <el-option label="已解绑" :value="2" />
             <el-option label="待审核" :value="3" />
         </el-select>
@@ -55,12 +55,12 @@
         style="width: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column label="编号" prop="id" align="center" width="150px">
+        <!-- <el-table-column label="编号" prop="id" align="center" width="150px">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="项目名称" prop="projectName" align="center" width="150">
+        </el-table-column> -->
+        <el-table-column label="项目名称" prop="projectName" align="center" width="130">
           <template slot-scope="{row}">
             <span>{{ row.projectName }}</span>
           </template>
@@ -70,12 +70,12 @@
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="姓名" prop="userName" align="center" width="100">
+        <el-table-column label="姓名" prop="userName" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.userName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="身份" prop="intoRoleName" align="center" width="100">
+        <el-table-column label="身份" prop="intoRoleName" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.intoRoleName }}</span>
           </template>
@@ -101,7 +101,7 @@
         
           </template>
         </el-table-column> -->
-        <el-table-column label="状态" prop="intoStatusName" align="center" width="150">
+        <el-table-column label="注册状态" prop="intoStatusName" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.intoStatusName }}</span>
           </template>
@@ -111,7 +111,7 @@
             <span>{{ row.resName }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="160">
+        <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
           <template slot-scope="{row}">
             <span v-if="row.intoRole == 0 || row.intoRole == 2">
               <span v-for=" (val, key) in row.houseList" :key="key">
@@ -139,12 +139,17 @@
             <span v-if = "row.houseIntoStatus == 3">待审核</span>
           </template>
         </el-table-column> -->
-        <el-table-column label="创建时间" align="center" width="160">
+        <el-table-column label="手机号" prop="phone" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.phone }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" align="center" width="160">
+        <el-table-column label="更新时间" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.updateTime }}</span>
           </template>
@@ -155,10 +160,10 @@
               解除绑定
             </el-button>
             <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 1" size="mini" type="primary" @click="handleOwner(row,$index)">
-              设为客户
+              设为租户
             </el-button>
             <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 3" size="mini" type="primary" @click="handleOwner(row,$index)">
-              设为业主
+              设为产权人
             </el-button>
           </template>
         </el-table-column>

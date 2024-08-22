@@ -9,6 +9,10 @@
       <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!-- <el-input v-model="listQuery.cerNo" placeholder="证件号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <!-- <el-input v-model="listQuery.licNo" placeholder="执照号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
+      <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 200px;" class="filter-item">
+          <el-option label="未注册" :value="99" />
+          <el-option label="已注册" :value="1" />
+        </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>
@@ -24,12 +28,12 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="项目" prop="projectName" align="center" width="140">
+      <el-table-column label="项目" prop="projectName" align="center" width="130">
         <template slot-scope="{row}">
           <span>{{ row.projectName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客户编码" prop="code" align="center" width="140">
+      <el-table-column label="客户编码" prop="code" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.code }}</span>
         </template>
@@ -39,19 +43,18 @@
           <span>{{ row.cstType }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="客户名称" prop="cstName" align="center" width="200">
+      <el-table-column label="客户名称" prop="cstName" align="center" width="150">
         <template slot-scope="{row}">
           <span>{{ row.cstName }}</span>
         </template>
       </el-table-column>  
-      <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="160">
+      <el-table-column label="注册状态" prop="cstIntoStatus" align="center" width="80">
         <template slot-scope="{row}">
-          <span v-for=" (val, key) in row.tagList" :key="key">
-                 {{ val.name }}&nbsp;&nbsp;
-          </span>
+          <span v-if="row.intoStatus == 0 ">未注册</span>
+          <span v-if="row.intoStatus == 1 ">已注册</span>
         </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="160">
+      </el-table-column>  
+      <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
           <template slot-scope="{row}">
             <span v-for=" (val, key) in row.houseList" :key="key">
                   <span>{{ val }}&nbsp;&nbsp;</span>
@@ -68,9 +71,16 @@
           <span>{{ row.licNo }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="客户级别" prop="cstLevel" align="center" width="100">
+      <el-table-column label="客户级别" prop="cstLevel" align="center" width="70">
         <template slot-scope="{row}">
           <span>{{ row.cstLevel }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="70">
+        <template slot-scope="{row}">
+          <span v-for=" (val, key) in row.tagList" :key="key">
+                 {{ val.name }}&nbsp;&nbsp;
+          </span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="有效性" prop="isAffect" align="center" width="120">
@@ -88,12 +98,12 @@
           <span>{{ row.cerType }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="创建时间" width="160px" align="center">
+      <el-table-column label="创建时间" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="160px" align="center">
+      <el-table-column label="更新时间" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.updateTime }}</span>
         </template>
@@ -265,10 +275,10 @@ export default {
     return {
       selectedIntoOption: null,
       intoTypeOptions: [
-        { intoTypeId: '1', intoTypeValue: '0', text: '客户(办公楼)' },
-        { intoTypeId: '2', intoTypeValue: '1', text: '员工(办公楼)' },
+        { intoTypeId: '1', intoTypeValue: '0', text: '租户(办公楼)' },
+        { intoTypeId: '2', intoTypeValue: '1', text: '租户员工(办公楼)' },
         { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
-        { intoTypeId: '4', intoTypeValue: '3', text: '住户(住宅)' },
+        { intoTypeId: '4', intoTypeValue: '3', text: '租客(住宅)' },
       ],
       webExpandedKeys:[],
       webCheckedKeys:[],

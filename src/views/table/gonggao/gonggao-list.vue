@@ -2,7 +2,14 @@
   <div class="app-container">
     <div class="filter-container">
       <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 200px" class="filter-item">
-            <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+          <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+      </el-select>
+      <el-select v-model="listQuery.type" placeholder="分类" clearable style="width: 200px" class="filter-item">
+          <el-option v-for="item in gonggaoTypes" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <el-select v-model="listQuery.isShow" placeholder="发布状态" clearable style="width: 140px" class="filter-item">
+          <el-option label="已发布" :value="0" />
+          <el-option label="未发布" :value="1" />
       </el-select>
       <el-input v-model="listQuery.title" placeholder="标题" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -26,17 +33,17 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="编号" prop="id" align="center" width="185px">
+      <!-- <el-table-column label="编号" prop="id" align="center" width="160px">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="项目" prop="proName" align="center" width="120">
         <template slot-scope="{row}">
           <span>{{ row.proName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="类型" prop="typeName" align="center" width="100">
+      <el-table-column label="分类" prop="typeName" align="center" width="100">
         <template slot-scope="{row}">
           <span>{{ row.typeName }}</span>
         </template>
@@ -76,18 +83,18 @@
           <span>{{ row.thumbUrl}}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="发布状态" prop="isShow" align="center" width="120">
+      <el-table-column label="发布状态" prop="isShow" align="center" width="90">
         <template slot-scope="{row}">
           <span v-if="row.isShow == 0">已发布</span>
           <span v-if="row.isShow == 1">未发布</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" width="160px">
+      <el-table-column label="创建时间" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" align="center" width="160px">
+      <el-table-column label="更新时间" align="center" width="150px">
         <template slot-scope="{row}">
           <span>{{ row.updateTime }}</span>
         </template>

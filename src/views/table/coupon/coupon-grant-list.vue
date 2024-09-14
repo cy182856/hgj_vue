@@ -1,11 +1,15 @@
 <template>
     <div class="app-container">
       <div class="filter-container">
-        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
-        <el-input v-model="listQuery.title" placeholder="券类型" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
-        <el-select v-model="listQuery.tagId" placeholder="选择标签" clearable style="width: 300px" class="filter-item">
+        <el-select v-model="listQuery.range" placeholder="发送对象" clearable style="width: 150px" class="filter-item">
+            <el-option label="客户" :value="1" />
+            <el-option label="个人" :value="2" />
+        </el-select>
+        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.title" placeholder="券名称" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.tagId" placeholder="选择标签" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in tagOptions" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
+        </el-select>
         <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
           查询
         </el-button>
@@ -21,47 +25,78 @@
         style="width: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column label="编号" prop="id" align="center" width="180px">
+        <el-table-column label="编号" prop="id" align="center" width="160px">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标签" prop="tagId" align="center" width="120">
+        <el-table-column label="标签" prop="tagName" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.name }}</span>
+            <span>{{ row.tagName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="劵类型" prop="title" align="center" width="120">
+        <el-table-column label="券名称" prop="title" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户编号" prop="cstCode" align="center" width="160">
+        <el-table-column label="发送对象" prop="range" align="center" width="100">
+          <template slot-scope="{row}">
+            <span v-if="row.range == 1">客户</span>
+            <span v-if="row.range == 2">个人</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分类" prop="typeName" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.typeName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="总量" prop="couNum" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.couNum }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="可用数量" prop="expNum" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.expNum }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="客户编号" prop="cstCode" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.cstCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" prop="cstName" align="center" width="180">
+        <el-table-column label="客户名称" prop="cstName" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="开始时间" prop="startTime" align="center" width="120">
+        <el-table-column label="微信号" prop="wxOpenId" align="center" width="160">
+          <template slot-scope="{row}">
+            <span>{{ row.wxOpenId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="姓名" prop="userName" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.userName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开始时间" prop="startTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" prop="startTime" align="center" width="120">
+        <el-table-column label="结束时间" prop="startTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.endTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" align="center" width="160px">
+        <el-table-column label="创建时间" align="center" width="140px">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" align="center" width="160px">
+        <el-table-column label="更新时间" align="center" width="140px">
           <template slot-scope="{row}">
             <span>{{ row.updateTime }}</span>
           </template>

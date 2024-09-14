@@ -4,6 +4,10 @@
         <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 200px" class="filter-item">
               <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
+        <el-select v-model="listQuery.miniIsShow" placeholder="小程序发布状态" clearable style="width: 200px" class="filter-item">
+          <el-option label="已发布" :value="1" />
+          <el-option label="未发布" :value="0" />
+      </el-select>
         <el-input v-model="listQuery.title" placeholder="标题" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.formToken" placeholder="表单token" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />&nbsp;
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -24,12 +28,12 @@
         style="width: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column label="编号" prop="id" align="center" width="160px">
+        <!-- <el-table-column label="编号" prop="id" align="center" width="160px">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="项目" prop="proName" align="center" width="160px">
+        </el-table-column> -->
+        <el-table-column label="项目" prop="proName" align="center" width="120px">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>
           </template>
@@ -44,17 +48,18 @@
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column :show-overflow-tooltip='true' label="链接" prop="url" align="center" width="80">
-          <template slot-scope="{row}">
-            <span>{{ row.url }}</span>
-          </template>
-        </el-table-column>
         <el-table-column label="小程序发布状态" prop="miniIsShow" align="center" width="110">
           <template slot-scope="{row}">
             <span v-if="row.miniIsShow == 1">已发布</span>
             <span v-if="row.miniIsShow == 0">未发布</span>
           </template>
         </el-table-column>
+        <el-table-column :show-overflow-tooltip='true' label="表单地址" prop="url" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.url }}</span>
+          </template>
+        </el-table-column>
+        <!-- 
         <el-table-column label="公众号发布状态" prop="pubMenuIsShow" align="center" width="110">
           <template slot-scope="{row}">
             <span v-if="row.pubMenuIsShow == 1">已发布</span>
@@ -71,17 +76,18 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
                 编辑
             </el-button>
-            <!-- <el-button v-if="row.miniIsShow == 0" type="primary" size="mini" @click="qnMiniIsShow(row)">
+           <el-button v-if="row.miniIsShow == 0" type="primary" size="mini" @click="qnMiniIsShow(row)">
                 小程序发布
             </el-button>
             <el-button v-if="row.miniIsShow == 1" type="danger" size="mini" @click="qnNotMiniIsShow(row)">
                 小程序撤回
             </el-button>
+             <!-- 
             <el-button v-if="row.pubMenuIsShow == 0" type="primary" size="mini" @click="qnPubMenuIsShow(row)">
                 公众号发布
             </el-button>
@@ -114,11 +120,11 @@
             <el-input v-model="temp.formToken" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
           </el-form-item>
           <el-form-item label="标题" prop="title">
-            <el-input v-model="temp.title" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
+            <el-input v-model="temp.title" placeholder="" maxlength="50" clearable style="width: 300px" class="filter-item"></el-input>
           </el-form-item>
-          <!-- <el-form-item label="链接" prop="url">
+          <el-form-item label="表单地址" prop="url">
             <el-input v-model="temp.url" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
-          </el-form-item> -->
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">
@@ -196,7 +202,7 @@
           proNum: [{ required: true, message: 'proNum is required', trigger: 'change' }],
           formToken: [{ required: true, message: 'formToken is required', trigger: 'change' }],
           title: [{ required: true, message: 'title is required', trigger: 'change' }],
-          //url:[{ required: true, message: 'url is required', trigger: 'change' }],
+          url:[{ required: true, message: 'url is required', trigger: 'change' }],
           timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }]
         },
         downloadLoading: false,

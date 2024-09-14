@@ -30,9 +30,14 @@
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="小时" prop="hour" align="center" width="120">
+        <el-table-column label="分类" prop="type" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.hour }}</span>
+            <span>{{ row.typeName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="数量" prop="couNum" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.couNum }}</span>
           </template>
         </el-table-column>
         <el-table-column label="是否有效" prop="isExp" align="center" width="120">
@@ -76,11 +81,22 @@
           <el-form-item class="is_show" label="id" prop="id">
             <el-input v-model="temp.id" />
           </el-form-item>
-          <el-form-item label="类型" prop="title">
+          <el-form-item label="分类" prop="typeCode" style="margin-top: 20px;">
+            <el-select v-model="temp.typeCode" placeholder="分类" clearable style="width: 300px" class="filter-item">
+              <el-option v-for="item in couponTypeOptions" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" />
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="分类" prop="type">
+            <el-select v-model="temp.type" placeholder="分类" clearable style="width: 300px" class="filter-item">
+              <el-option label="活动中心券" :value="1" />
+              <el-option label="停车券" :value="2" />
+            </el-select>
+          </el-form-item> -->
+          <el-form-item label="标题" prop="title">
             <el-input v-model="temp.title" placeholder="标题" clearable style="width: 300px" class="filter-item"></el-input>
           </el-form-item>
-          <el-form-item label="小时" prop="hour">
-            <el-input v-model="temp.hour" placeholder="小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          <el-form-item label="数量" prop="couNum">
+            <el-input v-model="temp.couNum" placeholder="数量" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>
           <!-- <el-date-picker
             v-model="temp.startTime"
@@ -89,10 +105,10 @@
             placeholder="选择日期">
         </el-date-picker> -->
           <el-form-item label="是否有效" prop="isExp">
-          <el-select v-model="temp.isExp" placeholder="是否有效" clearable style="width: 300px" class="filter-item">
-            <el-option label="是" :value="0" />
-            <el-option label="否" :value="1" />
-          </el-select>
+            <el-select v-model="temp.isExp" placeholder="是否有效" clearable style="width: 300px" class="filter-item">
+              <el-option label="是" :value="0" />
+              <el-option label="否" :value="1" />
+            </el-select>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -110,17 +126,42 @@
           <el-form-item class="is_show" label="id" prop="id">
             <el-input v-model="temp.id" />
           </el-form-item>
-          <el-form-item label="选择标签" prop="name">
+          <el-form-item label="选择标签" prop="tagId">
           <el-select v-model="temp.tagId" placeholder="选择标签" clearable style="width: 300px" class="filter-item">
             <el-option v-for="item in tagOptions" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
           </el-form-item>          
-        <el-form-item label="开始时间" prop="startTime">
+        <!-- <el-form-item label="开始时间" prop="startTime">
           <el-input v-model="temp.startTime" placeholder="开始时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
+        </el-form-item> -->
+
+        <el-form-item label="开始日期" prop="startTime">
+          <el-date-picker
+            value-format="yyyy-MM-dd"
+            style="width: 300px"
+            class="filter-item"
+            v-model="temp.startTime"
+            type="date"
+            placeholder="开始日期"
+            >
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="结束时间" prop="endTime">
+
+        <el-form-item label="结束日期" prop="endTime">
+          <el-date-picker
+            value-format="yyyy-MM-dd"
+            style="width: 300px"
+            class="filter-item"
+            v-model="temp.endTime"
+            type="date"
+            placeholder="结束日期"
+            >
+          </el-date-picker>
+        </el-form-item>
+
+        <!-- <el-form-item label="结束时间" prop="endTime">
           <el-input v-model="temp.endTime" placeholder="结束时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
-        </el-form-item>
+        </el-form-item> -->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="grantPreview(row)">
@@ -146,12 +187,12 @@
         style="width: 100%;"
         @sort-change="sortChange"
         >
-          <el-table-column label="编号" prop="cstCode" align="center" width="150" >
+          <el-table-column label="发送编号" prop="cstCode" align="center" width="150" >
             <template slot-scope="{row}">
               <span>{{row.cstCode}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="名称" prop="cstName" align="center" width="" >
+          <el-table-column label="发送对象" prop="cstName" align="center" width="" >
             <template slot-scope="{row}">
               <span>{{row.cstName}}</span>
             </template>
@@ -172,45 +213,55 @@
         border
         fit
         highlight-current-row
-        style="width: 200%;"
+        style="width: 100%;height: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column label="编号" prop="id" align="center" width="180px">
+        <!-- <el-table-column label="编号" prop="id" align="center" width="160px">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="券名称" prop="title" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标签" prop="name" align="center" width="120">
+        <el-table-column label="标签" prop="tagName" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.name }}</span>
+            <span>{{ row.tagName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="开始时间" prop="startTime" align="center" width="120">
+        <el-table-column label="分类" prop="typeName" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.typeName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="数量" prop="couNum" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.couNum }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开始日期" prop="startTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" prop="endTime" align="center" width="120">
+        <el-table-column label="结束日期" prop="endTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.endTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" align="center" width="160px">
+        <el-table-column label="创建时间" align="center" width="140px">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" align="center" width="160px">
+        <el-table-column label="更新时间" align="center" width="140px">
           <template slot-scope="{row}">
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="90" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
             <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="batchDelete(row,$index)">
               删除
@@ -230,6 +281,7 @@
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect, selectCstList} from '@/api/tag/tag'
+  import { couponTypeSelect } from '@/api/coupon/coupon-type'
 
   export default {
     name: 'ComplexTable',
@@ -253,6 +305,7 @@
         tagOptions:null,
         roleOptions:null,
         serchRoleOptions:null,
+        couponTypeOptions:null,
         readonly: true,
         tableKey: 0,
         list: null,
@@ -292,9 +345,13 @@
         },
         pvData: [],
         rules: {
-          type: [{ required: true, message: 'type is required', trigger: 'change' }],
-          timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-          title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+          typeCode: [{ required: true, message: '分类不能为空', trigger: 'change' }],
+          title: [{ required: true, message: '标题不能为空', trigger: 'change' }],
+          isExp: [{ required: true, message: '是否有效不能为空', trigger: 'change' }],
+          couNum: [{ required: true, message: '数量不能为空', trigger: 'change' }],
+          tagId: [{ required: true, message: '标签不能为空', trigger: 'change' }],
+          startTime: [{ required: true, message: '开始日期不能为空', trigger: 'change' }],
+          endTime: [{ required: true, message: '结束日期不能为空', trigger: 'change' }]
         },
         downloadLoading: false
 
@@ -324,7 +381,12 @@
         tagSelect().then(response => {
           this.tagOptions = response.data.list
         })  
+         // 分类
+        couponTypeSelect().then(response => {
+          this.couponTypeOptions = response.data.list
+        })  
       },
+      
       handleFilter() {
         this.listQuery.page = 1
         this.getList()
@@ -444,6 +506,7 @@
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
               this.dialogFormVisible = false
+              this.getList();
               this.$notify({
                 title: 'Success',
                 message: 'Update Successfully',

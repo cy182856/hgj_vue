@@ -6,6 +6,7 @@
         </el-select>
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
             <el-option label="租户" :value="0" />
             <el-option label="租户员工" :value="1" />

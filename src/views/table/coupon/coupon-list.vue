@@ -46,6 +46,11 @@
             <span v-if="row.isExp == 1">否</span>
           </template>
         </el-table-column>
+        <el-table-column label="描述" prop="desc" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.desc }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" align="center" width="160px">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
@@ -109,7 +114,10 @@
               <el-option label="是" :value="0" />
               <el-option label="否" :value="1" />
             </el-select>
-        </el-form-item>
+          </el-form-item>
+          <el-form-item label="描述" prop="desc">
+            <el-input v-model="temp.desc" placeholder="描述" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">

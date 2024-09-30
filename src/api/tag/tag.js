@@ -57,6 +57,14 @@ export function selectCstTree(query) {
   })
 }
 
+export function selectCstTreeByCardId(cardId) {
+  return request({
+    url: url + '/tag/selectCstTreeByCardId',
+    method: 'get',
+    params: {cardId}
+  })
+}
+
 export function selectCstTreePerson(query) {
   return request({
     url: url + '/tag/selectCstTreePerson',

@@ -7,7 +7,7 @@
         </el-select>
         <el-select v-model="listQuery.type" placeholder="来源" clearable style="width: 140px" class="filter-item">
           <el-option label="智慧管家" :value="1" />
-          <el-option label="客服人员" :value="2" />
+          <el-option label="客服" :value="2" />
         </el-select>
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -139,11 +139,11 @@
           border
           fit
           highlight-current-row
-          style="width: 100%;height: 100%;"
+          style="width: 99%;height: 100%;"
           @sort-change="sortChange"
         >
         
-        <el-table-column label="小区号" prop="neighNo" align="center" width="130">
+        <el-table-column label="小区号" prop="neighNo" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.neighNo }}</span>
           </template>
@@ -158,27 +158,27 @@
               <span>{{ row.deviceNo }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="出入" prop="isUnlock" align="center" width="50">
+          <el-table-column label="出入" prop="isUnlock" align="center" width="60">
             <template slot-scope="{row}">
               <span v-if="row.isUnlock == 2" >进门</span>
               <span v-if="row.isUnlock == 4" >出门</span>
             </template>
           </el-table-column>
-          <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="140">
+          <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="150">
             <template slot-scope="{row}">
               <span>{{ row.openDoorTime }}</span>
             </template>
           </el-table-column>
-            <el-table-column label="创建时间" align="center" width="140px">
+            <el-table-column label="创建时间" align="center" width="150px">
               <template slot-scope="{row}">
                 <span>{{ row.createTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="更新时间" align="center" width="140px">
+            <!-- <el-table-column label="更新时间" align="center" width="140px">
               <template slot-scope="{row}">
                 <span>{{ row.updateTime }}</span>
               </template>
-            </el-table-column>  
+            </el-table-column>   -->
           
           </el-table>
 

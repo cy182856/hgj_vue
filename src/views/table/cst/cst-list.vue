@@ -12,7 +12,7 @@
       <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 200px;" class="filter-item">
           <el-option label="未注册" :value="99" />
           <el-option label="已注册" :value="1" />
-        </el-select>
+      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>

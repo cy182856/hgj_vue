@@ -26,7 +26,7 @@
           placeholder="有效结束日期"
         >
         </el-date-picker>
-        <el-select v-model="listQuery.isExp" placeholder="是否有效" clearable style="width: 100px;" class="filter-item">
+        <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 100px;" class="filter-item">
           <el-option label="有效" :value=1 />
           <el-option label="无效" :value=0 />
         </el-select>
@@ -57,7 +57,7 @@
         style="width: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column label="项目" prop="proName" align="center" width="120px">
+        <el-table-column label="项目" prop="proName" align="center" width="100px">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>
           </template>
@@ -97,6 +97,11 @@
             <span>{{ row.applyNum }}</span>
           </template>
         </el-table-column>    
+        <el-table-column label="剩余次数" prop="applyNum" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.totalNum - row.applyNum }}</span>
+          </template>
+        </el-table-column>    
         <el-table-column label="有效起始日期" prop="startTime" align="center" width="110">
           <template slot-scope="{row}">
             <span>{{ row.startTime }}</span>
@@ -107,7 +112,7 @@
             <span>{{ row.endTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="是否有效" prop="isExp" align="center" width="90">
+        <el-table-column label="状态" prop="isExp" align="center" width="90">
           <template slot-scope="{row}">
             <span v-if="row.isExp == 1">有效</span>
             <span v-if="row.isExp == 0">无效</span>
@@ -134,8 +139,8 @@
             <el-button v-if="row.isExp == 1" size="mini" type="danger" @click="cardDisable(row,$index)">
               禁用
             </el-button>
-            <el-button v-if="row.isExp == 0" size="mini" type="danger" @click="cardSecure(row,$index)">
-              解除
+            <el-button v-if="row.isExp == 0" size="mini" type="primary" @click="cardSecure(row,$index)">
+              恢复
             </el-button>
           </template>
         </el-table-column>

@@ -12,6 +12,7 @@
             <el-option label="租户员工" :value="1" />
             <el-option label="产权人" :value="2" />
             <el-option label="租客" :value="3" />
+            <el-option label="同住人" :value="4" />
         </el-select>
         <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 140px;" class="filter-item">
             <el-option label="未注册" :value="0" />
@@ -114,7 +115,7 @@
         </el-table-column> -->
         <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
           <template slot-scope="{row}">
-            <span v-if="row.intoRole == 0 || row.intoRole == 2">
+            <span v-if="row.intoRole == 0 || row.intoRole == 2 || row.intoRole == 4">
               <span v-for=" (val, key) in row.houseList" :key="key">
                     <span>{{ val }}&nbsp;&nbsp;</span>
               </span>
@@ -155,17 +156,20 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
-            <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == 3 || row.houseIntoStatus == null) " size="mini" type="danger" @click="handleDelete(row,$index)">
+            <el-button v-if="row.intoStatus == 1 && row.houseIntoStatus != 2 " size="mini" type="danger" @click="handleDelete(row,$index)">
               解除绑定
             </el-button>
-            <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 1" size="mini" type="primary" @click="handleOwner(row,$index)">
+            <!-- <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 1" size="mini" type="primary" @click="handleTen(row,$index)">
               设为租户
             </el-button>
             <el-button v-if="row.intoStatus == 1 && (row.houseIntoStatus == 1 || row.houseIntoStatus == null) && row.intoRole == 3" size="mini" type="primary" @click="handleOwner(row,$index)">
               设为产权人
             </el-button>
+            <el-button v-if="row.intoStatus == 1 && (row.intoRole == 2 || row.intoRole == 3)" size="mini" type="primary" @click="handleCohabit(row,$index)">
+              设为同住人
+            </el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -176,7 +180,7 @@
   </template>
   
   <script>
-  import { cstIntoList, deleteCstInto, ownerCstInto } from '@/api/cstInto/cstInto'
+  import { cstIntoList, deleteCstInto, ownerCstInto ,cohabitCstInto} from '@/api/cstInto/cstInto'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { projectSelect } from '@/api/config/config'
@@ -344,7 +348,7 @@
                 type: 'success',
                 duration: 2000
             })
-              this.list.splice(index, 1)
+              //this.list.splice(index, 1)
               this.getList();
               } else {
                 this.$notify({
@@ -362,7 +366,7 @@
       },
 
       handleOwner(row, index) {
-        this.$confirm('确认设为业主吗?', '提示', {
+        this.$confirm('确认设为产权人吗?', '提示', {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
@@ -371,7 +375,69 @@
             if (res.code == 20000) {
               this.$notify({
                 title: 'Success',
-                message: 'Delete Successfully',
+                message: 'Successfully',
+                type: 'success',
+                duration: 2000
+            })
+              this.list.splice(index, 1)
+              this.getList();
+              } else {
+                this.$notify({
+                  message: res.data.message,
+                  type: 'error',
+                  duration: 2000          
+                })
+              }
+            });
+          })
+          //取消
+          .catch(() => {
+            //alert('取消')
+          });
+      },
+
+      handleTen(row, index) {
+        this.$confirm('确认设为租户吗?', '提示', {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          ownerCstInto(row.id).then((res) => {
+            if (res.code == 20000) {
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
+                type: 'success',
+                duration: 2000
+            })
+              this.list.splice(index, 1)
+              this.getList();
+              } else {
+                this.$notify({
+                  message: res.data.message,
+                  type: 'error',
+                  duration: 2000          
+                })
+              }
+            });
+          })
+          //取消
+          .catch(() => {
+            //alert('取消')
+          });
+      },
+
+      handleCohabit(row, index) {
+        this.$confirm('确认设为同住人吗?', '提示', {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
+          cohabitCstInto(row.id).then((res) => {
+            if (res.code == 20000) {
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
                 type: 'success',
                 duration: 2000
             })

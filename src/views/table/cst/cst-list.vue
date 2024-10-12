@@ -224,7 +224,7 @@
           </div>
         </el-form-item>
 
-        <el-form-item v-if="selectedIntoOption == 1 || selectedIntoOption == 3" label="选择房屋" prop="resId">
+        <el-form-item v-if="selectedIntoOption == 1 || selectedIntoOption == 3 || selectedIntoOption == 4" label="选择房屋" prop="resId">
           <el-select v-model="resId" placeholder="房屋" clearable multiple style="width: 328px" class="filter-item">
             <el-option v-for="item in resOptions" :key="item.id" :label="item.resName" :value="item.id" ></el-option>
           </el-select>
@@ -279,6 +279,7 @@ export default {
         { intoTypeId: '2', intoTypeValue: '1', text: '租户员工(办公楼)' },
         { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
         { intoTypeId: '4', intoTypeValue: '3', text: '租客(住宅)' },
+        { intoTypeId: '5', intoTypeValue: '4', text: '同住人(住宅)' },     
       ],
       webExpandedKeys:[],
       webCheckedKeys:[],
@@ -427,7 +428,7 @@ export default {
     },
     // 生成客户入住二维码
     createIntoCstQrCode() {
-      if(this.selectedIntoOption == 1 || this.selectedIntoOption == 3){
+      if(this.selectedIntoOption == 1 || this.selectedIntoOption == 3 || this.selectedIntoOption == 4){
         if(this.resId === null){
           this.$notify({
               message: '房屋不能为空！',

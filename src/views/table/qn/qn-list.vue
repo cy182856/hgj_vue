@@ -116,6 +116,11 @@
                 <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
             </el-select>
           </el-form-item>
+          <el-form-item label="选择标签" prop="tagId">
+            <el-select v-model="temp.tagId" placeholder="选择标签" clearable style="width: 300px" class="filter-item">
+              <el-option v-for="item in tagOptions" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>  
           <el-form-item label="表单token" prop="formToken">
             <el-input v-model="temp.formToken" placeholder="" clearable style="width: 300px" class="filter-item"></el-input>
           </el-form-item>
@@ -127,6 +132,9 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
+          <el-button @click="cstPreview()">
+            客户预览
+          </el-button>
           <el-button @click="dialogFormVisible = false">
             取消
           </el-button>
@@ -135,6 +143,37 @@
           </el-button>
         </div>
       </el-dialog>
+
+       <!-- 客户预览 -->
+       <el-dialog :title="textMap[cstPreviewStatus]" :visible.sync="cstPreviewFormShow">
+        <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="cstList"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+        @sort-change="sortChange"
+        >
+          <el-table-column label="发送编号" prop="cstCode" align="center" width="150" >
+            <template slot-scope="{row}">
+              <span>{{row.cstCode}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="发送对象" prop="cstName" align="center" width="" >
+            <template slot-scope="{row}">
+              <span>{{row.cstName}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">        
+          <el-button @click="cstPreviewFormShow = false">
+            取消
+          </el-button>
+        </div>
+      </el-dialog>
+
     </div>
   </template>
   
@@ -143,6 +182,7 @@
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { qnList, qnSave, qnMiniIsShow, qnNotMiniIsShow, qnPubMenuIsShow, qnNotPubMenuIsShow, qnDelete } from '@/api/qn/qn'
   import { projectSelect } from '@/api/config/config'
+  import { tagSelect, selectCstList} from '@/api/tag/tag'
   import axios from 'axios'
   import { url } from '@/utils/url'
   
@@ -165,9 +205,13 @@
     },
     data() {
       return {
+        tagOptions:null,
         roleOptions:null,
         serchRoleOptions:null,
         projectOptions:null,
+        cstPreviewStatus: '',
+        cstPreviewFormShow:false,
+        cstList:null,
         readonly: true,
         tableKey: 0,
         list: null,
@@ -233,6 +277,10 @@
         projectSelect().then(response => {
           this.projectOptions = response.data.list
         })  
+         // 标签
+        tagSelect().then(response => {
+          this.tagOptions = response.data.list
+        })   
       },
 
       fileDown(row){
@@ -404,6 +452,28 @@
         .catch(() => {
           //alert('取消')
         });
+      },
+
+      // 客户预览
+      cstPreview() { 
+        var tagId = this.temp.tagId;
+        if(this.temp.tagId == null || this.temp.tagId == "" || this.temp.tagId == "undefined"){
+              this.$notify({
+                message: '请先选择标签！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        this.cstPreviewStatus = 'update'
+        this.cstPreviewFormShow = true   
+        this.cstList = null;     
+        selectCstList(tagId).then(response => {
+          this.cstList = response.data.list
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1.5 * 1000)
+        })
       },
 
       handleFilter() {

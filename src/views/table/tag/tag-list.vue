@@ -144,6 +144,13 @@
     </el-dialog>
 
     <el-dialog :title="textMap[personDialogStatus]" :visible.sync="personTree">
+          <el-select v-model="temp.intoRole" placeholder="选择身份" clearable multiple style="width: 500px" class="filter-item">
+            <el-option v-for="item in identityOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+          <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="queryPersonTree">
+            查询
+          </el-button>
+          <div style="margin-top: 20px;"></div>
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 100%; height: 100%; margin-left:0px;">  
         <el-row :gutter="30">
           <el-col :span="24">
@@ -181,6 +188,7 @@ import { tagList, tagSave, tagUpdate, tagDelete , selectCstTree, selectCstTreePe
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { projectSelect } from '@/api/config/config'
+import { identitySelect } from '@/api/identity/identity'
 
 
 // import VueMarkdown from 'vue-markdown'
@@ -214,6 +222,7 @@ export default {
     return {
       // markdownContent: '',
       // htmlMD: "",
+      identityOptions:null,
       projectOptions:null,
       roleOptions:null,
       serchRoleOptions:null,
@@ -317,6 +326,10 @@ export default {
       // 项目
       projectSelect().then(response => {
         this.projectOptions = response.data.list
+      })  
+       // 身份
+      identitySelect().then(response => {
+          this.identityOptions = response.data.list
       })  
     },
     // fetchMarkdown() {
@@ -550,7 +563,17 @@ export default {
       })
       
     },
-  
+
+    // 按条件帅选个人菜单树
+    queryPersonTree(){
+      selectCstTreePerson(this.temp).then((response) => {
+        // web菜单赋值
+        this.personTreeData = response.data.personTreeData
+        this.personTagExpandedKeys = response.data.tagExpandedKeys
+        this.personTagCheckedKeys=response.data.tagCheckedKeys       
+      })
+    },
+
     //获取用户勾选的客户编号用于传参后台
     getCheckedNodes() {
       let selectedCstCode = this.$refs.webTreeForm.getCheckedNodes(true, true); //(leafOnly, includeHalfChecked) 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false

@@ -65,11 +65,11 @@ export function selectCstTreeByCardId(cardId) {
   })
 }
 
-export function selectCstTreePerson(query) {
+export function selectCstTreePerson(data) {
   return request({
     url: url + '/tag/selectCstTreePerson',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 

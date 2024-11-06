@@ -4,15 +4,11 @@
         <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 160px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
-        <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 130px" class="filter-item">
-            <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-date-picker
           value-format="yyyy-MM-dd"
-          style="width: 140px"
+          style="width: 160px"
           class="filter-item"
           v-model="listQuery.startTime"
           type="date"
@@ -22,26 +18,22 @@
 
         <el-date-picker
           value-format="yyyy-MM-dd"
-          style="width: 140px"
+          style="width: 160px"
           class="filter-item"
           v-model="listQuery.endTime"
           type="date"
           placeholder="有效结束日期"
         >
         </el-date-picker>
-        <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 80px;" class="filter-item">
+        <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 100px;" class="filter-item">
           <el-option label="有效" :value=1 />
           <el-option label="无效" :value=0 />
-        </el-select>
-        <el-select v-model="listQuery.expNum" placeholder="剩余" clearable style="width: 80px;" class="filter-item">
-          <el-option label="有" :value=1 />
-          <el-option label="无" :value=0 />
         </el-select>
         <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
           查询
         </el-button>
-        <!-- <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="sendCardByCstCreateModel()">
-          按客户发卡
+        <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="sendHourByCstCreateModel()">
+          按客户发时长
         </el-button>
         <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="sendCardByTagCreateModel()">
           按标签发卡
@@ -51,9 +43,6 @@
         </el-button>
         <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="renewalByTagCreateModel()">
           批量续期
-        </el-button> -->
-        <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="sendCardByCstCreateModel()">
-          卡批量操作
         </el-button>
       </div>
   
@@ -61,21 +50,18 @@
         :key="tableKey"
         v-loading="listLoading"
         :data="list"
-        @selection-change="handleSelectionChange"
         border
         fit
         highlight-current-row
         style="width: 100%;"
         @sort-change="sortChange"
       >
-        <el-table-column type="selection" width="55" align="center" />
-
         <el-table-column label="项目" prop="proName" align="center" width="100px">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡类型" prop="cardTypeName" align="center" width="80px">
+        <el-table-column label="卡类型" prop="cardTypeName" align="center" width="90px">
           <template slot-scope="{row}">
             <span>{{ row.cardTypeName }}</span>
           </template>
@@ -85,7 +71,7 @@
             <span>{{ row.cardCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡名称" prop="cardName" align="center" width="100">
+        <el-table-column label="卡名称" prop="cardName" align="center" width="110">
           <template slot-scope="{row}">
             <span>{{ row.cardName }}</span>
           </template>
@@ -99,13 +85,8 @@
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
           </template>
-        </el-table-column>   
-        <el-table-column label="剩余" prop="expNum" align="center" width="50">
-          <template slot-scope="{row}">
-            <span>{{ row.expNum }}</span>
-          </template>
-        </el-table-column>   
-        <!-- <el-table-column label="总次数" prop="totalNum" align="center" width="80">
+        </el-table-column>     
+        <el-table-column label="总次数" prop="totalNum" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.totalNum }}</span>
           </template>
@@ -129,8 +110,8 @@
           <template slot-scope="{row}">
             <span>{{ row.endTime }}</span>
           </template>
-        </el-table-column> -->
-        <el-table-column label="状态" prop="isExp" align="center" width="50">
+        </el-table-column>
+        <el-table-column label="状态" prop="isExp" align="center" width="90">
           <template slot-scope="{row}">
             <span v-if="row.isExp == 1">有效</span>
             <span v-if="row.isExp == 0">无效</span>
@@ -146,17 +127,14 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
-            <el-button type="primary" size="mini" @click="cardCstBatchSelect(row)">
-              详细
-            </el-button>
-            <el-button v-if="row.isExp == 1" type="primary" size="mini" @click="rechargeCreateModel(row,$index)">
+            <el-button type="primary" size="mini" @click="rechargeCreateModel(row,$index)">
               充值
             </el-button>
-            <!-- <el-button type="primary" size="mini" @click="renewalCreateModel(row,$index)">
+            <el-button type="primary" size="mini" @click="renewalCreateModel(row,$index)">
               续期
-            </el-button> -->
+            </el-button>
             <el-button v-if="row.isExp == 1" size="mini" type="danger" @click="cardDisable(row,$index)">
               禁用
             </el-button>
@@ -170,14 +148,9 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
   
       <!-- 按客户发卡 -->
-      <el-dialog :title="textMap[sendCardByCstDialogStatus]" :visible.sync="sendCardByCstDialogShow">
+      <el-dialog :title="textMap[sendHourByCstDialogStatus]" :visible.sync="sendHourByCstDialogShow">
         <el-form ref="sendCardByCstDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
-          <el-form-item label="选择卡" prop="cardId">
-            <el-select v-model="temp.cardId" placeholder="选择卡" clearable style="width: 300px" class="filter-item">
-              <el-option v-for="item in cardOptions" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </el-form-item>  
-
+    
           <el-form-item label="选择客户" prop="">
             <el-button class="filter-item" style="width: 300px;" type="primary" icon="" @click="menuTreeCreate()">
               选择客户
@@ -186,8 +159,8 @@
 
           <div style="margin-left: 100px; margin-bottom: 20px; width: 500px;">{{cstCodeNameList}}</div>    
 
-          <el-form-item label="次数" prop="totalNum">
-            <el-input v-model="temp.totalNum" placeholder="次数" clearable style="width: 300px" class="filter-item"></el-input> 
+          <el-form-item label="小时" prop="totalHour">
+            <el-input v-model="temp.totalHour" placeholder="小时" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>     
 
           <el-form-item label="开始日期" prop="startTime">
@@ -216,10 +189,10 @@
 
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="sendCardByCstDialogShow = false">
+          <el-button @click="sendHourByCstDialogShow = false">
             取消
           </el-button>
-          <el-button type="primary" @click="sendCardByCstDialogStatus==='create'?sendCardByCst():sendCardByCst()">
+          <el-button type="primary" @click="sendHourByCstDialogStatus==='create'?sendHourByCst():sendHourByCst()">
             提交
           </el-button>
         </div>
@@ -307,7 +280,7 @@
           <el-button @click="sendCardByTagDialogShow = false">
             取消
           </el-button>
-          <el-button type="primary" @click="sendCardByTagDialogStatus==='create'?sendCardByTag():sendCardByTag()">
+          <el-button type="primary" @click="sendCardByTagDialogStatus==='create'?sendHourByTag():sendHourByTag()">
             提交
           </el-button>
         </div>
@@ -353,35 +326,9 @@
           <el-form-item label="id" prop="id" class="is_show">
             <el-input v-model="temp.id" placeholder="id" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>   
-          
-          <el-form-item label="次数/小时" prop="rechargeNum">
-            <el-input v-model="temp.rechargeNum" placeholder="次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          <el-form-item label="充值次数" prop="rechargeNum">
+            <el-input v-model="temp.rechargeNum" placeholder="充值次数" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>     
-
-          <el-form-item v-if="temp.cardType == 1" label="有效年份" prop="expDate">
-            <el-date-picker
-              value-format="yyyy"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.expDate"
-              type="year"
-              placeholder="有效年份"
-              >
-            </el-date-picker>
-          </el-form-item>
-
-          <el-form-item v-if="temp.cardType == 2" label="有效月份" prop="expDate">
-            <el-date-picker
-              value-format="yyyy-MM"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.expDate"
-              type="month"
-              placeholder="有效月份"
-              >
-            </el-date-picker>
-          </el-form-item>
-
         </el-form>  
         <div slot="footer" class="dialog-footer">
           <el-button @click="rechargeDialogShow = false">
@@ -481,7 +428,7 @@
           <el-button @click="renewalDialogShow = false">
             取消
           </el-button>
-          <el-button type="primary" @click="renewalDialogStatus==='create'?cardRenewal():cardRenewal()">
+          <el-button type="primary" @click="rechargeDialogStatus==='create'?cardRenewal():cardRenewal()">
             提交
           </el-button>
         </div>    
@@ -517,154 +464,18 @@
         </div>
       </el-dialog>
 
-      <!-- 批量操作 -->
-    <el-dialog :title="textMap[cardBulkOperationDialogStatus]" :visible.sync="cardBulkOperationDialogShow">
-        <el-form ref="cardBulkOperationDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
-          <el-form-item label="选择卡" prop="cardId">
-            <el-select v-model="temp.cardId" placeholder="选择卡" clearable style="width: 300px" class="filter-item">
-              <el-option v-for="item in cardOptions" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </el-form-item>  
-
-          <el-form-item style="margin-top: 20px;" label="卡操作">
-            <el-radio-group v-model="temp.cardOption" class="radio-group">
-              <!-- <el-radio :label=1>发卡</el-radio> -->
-              <el-radio :label=2>禁用</el-radio>
-              <el-radio :label=3>恢复</el-radio>
-              <el-radio :label=4>充值</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
-          <!-- <el-form-item label="卡类型" prop="cardType">
-          <el-select v-model="temp.cardType" placeholder="卡类型" clearable style="width: 300px;" class="filter-item">
-            <el-option label="年卡" :value="1" />
-            <el-option label="月卡" :value="2" />
-          </el-select>
-          </el-form-item> -->
-
-          <el-form-item v-if="temp.cardOption == 4" label="次数/小时" prop="totalNum">
-            <el-input v-model="temp.totalNum" placeholder="次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
-          </el-form-item>     
-
-          <el-form-item v-if="temp.cardId == 1 && temp.cardOption == 4" label="有效年份" prop="expDate">
-            <el-date-picker
-              value-format="yyyy"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.expDate"
-              type="year"
-              placeholder="有效年份"
-              >
-            </el-date-picker>
-          </el-form-item>
-
-          <el-form-item v-if="temp.cardId == 2 && temp.cardOption == 4" label="有效月份" prop="expDate">
-            <el-date-picker
-              value-format="yyyy-MM"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.expDate"
-              type="month"
-              placeholder="有效月份"
-              >
-            </el-date-picker>
-          </el-form-item>
-
-          <!-- <el-form-item label="开始日期" prop="startTime">
-            <el-date-picker
-              value-format="yyyy-MM-dd"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.startTime"
-              type="date"
-              placeholder="开始日期"
-              >
-            </el-date-picker>
-          </el-form-item>
-
-          <el-form-item label="结束日期" prop="endTime">
-            <el-date-picker
-              value-format="yyyy-MM-dd"
-              style="width: 300px"
-              class="filter-item"
-              v-model="temp.endTime"
-              type="date"
-              placeholder="结束日期"
-              >
-            </el-date-picker>
-          </el-form-item> -->
-
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="cardBulkOperationDialogShow = false">
-            取消
-          </el-button>
-          <el-button type="primary" @click="cardBulkOperationDialogStatus==='create'?cardBulkOperation():cardBulkOperation()">
-            提交
-          </el-button>
-        </div>
-      </el-dialog>
-
-      <el-dialog :title="textMap[cardCstBatchStatus]" :visible.sync="cardCstBatchOperationDialogShow">
-          <el-table
-          :key="tableKey"
-          v-loading="cardCstBatchLoading"
-          :data="cardCstBatchList"
-          border
-          fit
-          highlight-current-row
-          style="width: 95%;height: 100%;"
-          @sort-change="sortChange"
-        >
-        
-        <el-table-column label="卡号" prop="cardCode" align="center" width="180">
-          <template slot-scope="{row}">
-            <span>{{ row.cardCode }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="总数" prop="totalNum" align="center" width="60">
-            <template slot-scope="{row}">
-              <span>{{ row.totalNum }}</span>
-            </template>
-        </el-table-column>    
-        <el-table-column label="已用" prop="applyNum" align="center" width="60">
-            <template slot-scope="{row}">
-              <span>{{ row.applyNum }}</span>
-            </template>
-        </el-table-column>      
-        <el-table-column label="有效期" prop="expDate" align="center" width="100">
-            <template slot-scope="{row}">
-              <span>{{ row.expDate }}</span>
-            </template>
-        </el-table-column>
-        <el-table-column label="创建时间" align="center" width="150px">
-            <template slot-scope="{row}">
-              <span>{{ row.createTime }}</span>
-            </template>
-            </el-table-column>
-        <el-table-column label="更新时间" align="center" width="140px">
-            <template slot-scope="{row}">
-              <span>{{ row.updateTime }}</span>
-            </template>
-        </el-table-column>      
-          
-        </el-table>
-
-      </el-dialog>
-
     </div>
   </template>
   
   <script>
   import { selectCstTreeByCardId } from '@/api/tag/tag'
-  import { sendCardByTag, sendCardByCst, rechargeByTag, cardRecharge, renewalByTag, cardRenewal, cardCstList, cardDisable, cardSecure, cardBulkOperation} from '@/api/card/card-cst'
+  // import { rechargeByTag, cardRecharge, renewalByTag, cardRenewal, cardDisable, cardSecure} from '@/api/card/card-cst'
+  import { sendHourByTag, sendHourByCst, rechargeByTag, cardRecharge, renewalByTag, cardRenewal, cstHourList, cardDisable, cardSecure} from '@/api/parkpay/parkpay-cst-hour'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect, selectCstList} from '@/api/tag/tag'
   import { cardSelect} from '@/api/card/card'
-  import { cardTypeSelect} from '@/api/card/card-type'
   import { projectSelect } from '@/api/config/config'
-  import { cardCstBatch} from '@/api/card/card-cst-batch'
 
   export default {
     name: 'ComplexTable',
@@ -685,22 +496,12 @@
     },
     data() {
       return {
-        // 选中数组
-        cardCstCodes: [],
-        // 非单个禁用
-        single: true,
-        // 非多个禁用
-        multiple: true,
-        cardBulkOperationDialogShow:false,
-        cardOptions:null,
         projectOptions:null,
-        cardTypeOptions:null,
         tagOptions:null,
         cardOptions:null,
         cstTree: false,
         readonly: true,
         tableKey: 0,
-        cardCstBatchOperationDialogShow:false,
         list: null,
         grantBatchList:null,
         cstList:null,
@@ -727,8 +528,8 @@
         menuTree: false,
         cstPreviewStatus: '',
         cstPreviewFormShow:false,
-        sendCardByCstDialogStatus:'',
-        sendCardByCstDialogShow:false,
+        sendHourByCstDialogStatus:'',
+        sendHourByCstDialogShow:false,
         sendCardByTagDialogStatus: '',
         sendCardByTagDialogShow:false,
         rechargeByTagDialogStatus:'',
@@ -763,7 +564,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        cardCstList(this.listQuery).then(response => {
+        cstHourList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total  
           setTimeout(() => {
@@ -778,14 +579,6 @@
         projectSelect().then(response => {
           this.projectOptions = response.data.list
         })  
-        // 卡 
-        cardSelect().then(response => {
-          this.cardOptions = response.data.list
-        })  
-        // 卡类型
-        cardTypeSelect().then(response => {
-          this.cardTypeOptions = response.data.list
-        })  
         // 标签
         tagSelect().then(response => {
           this.tagOptions = response.data.list
@@ -794,17 +587,8 @@
       
       // 选择客户
       menuTreeCreate() {
-        var cardId = this.temp.cardId;
-          if(cardId == null || cardId == "" || cardId == "undefined"){
-              this.$notify({
-                message: '请选择卡！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-          }
-          //this.resetTemp()
-          this.cstDialogStatus = '客户选择'
+        //this.resetTemp()
+        this.cstDialogStatus = '客户选择'
           this.cstTree = true
           this.$nextTick(() => {
             this.$refs['cstDataForm'].clearValidate()
@@ -818,7 +602,7 @@
             this.cstTreeData = response.data.cstTreeData
            // this.tagExpandedKeys = response.data.tagExpandedKeys
             //this.tagCheckedKeys = response.data.tagCheckedKeys  
-          })        
+          })                
       }, 
 
        //获取用户勾选的客户编号用于传参后台
@@ -849,13 +633,13 @@
         // })
       },
 
-      sendCardByCstCreateModel() {
+      sendHourByCstCreateModel() {
         this.resetTemp()
         this.cstCodeNameList = null;
-        this.sendCardByCstDialogStatus = 'create';
-        this.sendCardByCstDialogShow = true
+        this.sendHourByCstDialogStatus = 'create';
+        this.sendHourByCstDialogShow = true
         this.$nextTick(() => {
-          this.$refs['sendCardByCstDialogShow'].clearValidate()
+          this.$refs['sendHourByCstDialogShow'].clearValidate()
         })
       },
   
@@ -937,7 +721,7 @@
         })
       },
       
-      sendCardByTag() {
+      sendHourByTag() {
         if(this.temp.cardId == null || this.temp.cardId == "" || this.temp.cardId == "undefined"){
               this.$notify({
                 message: '卡不能为空！',
@@ -982,7 +766,7 @@
          if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) 
-            sendCardByTag(tempData).then(() => {
+            sendHourByTag(tempData).then(() => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
               this.sendCardByTagDialogShow = false
@@ -998,15 +782,7 @@
         })
       },
 
-      sendCardByCst() {
-        if(this.temp.cardId == null || this.temp.cardId == "" || this.temp.cardId == "undefined"){
-              this.$notify({
-                message: '卡不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
+      sendHourByCst() {   
         if(this.temp.cstCodeList == null || this.temp.cstCodeList == "" || this.temp.cstCodeList == "undefined"){
               this.$notify({
                 message: '客户不能为空！',
@@ -1017,7 +793,7 @@
         }
         if(this.temp.totalNum == null || this.temp.totalNum == "" || this.temp.totalNum == "undefined"){
               this.$notify({
-                message: '次数不能为空！',
+                message: '小时不能为空！',
                 type: 'error',
                 duration: 2000          
               })
@@ -1044,10 +820,10 @@
          if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.timestamp = +new Date(tempData.timestamp) 
-            sendCardByCst(tempData).then(() => {
+            sendHourByCst(tempData).then(() => {
               const index = this.list.findIndex(v => v.id === this.temp.id)
               this.list.splice(index, 1, this.temp)
-              this.sendCardByCstDialogShow = false
+              this.sendHourByCstDialogShow = false
               this.getList();
               this.$notify({
                 title: 'Success',
@@ -1106,40 +882,13 @@
       },
 
       cardRecharge() {
-         // 充值，次数不能为空      
-         if( this.temp.rechargeNum == null || this.temp.rechargeNum == "" || this.temp.rechargeNum == "undefined"){
-              this.$notify({
-                message: '次数/小时不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-        // 正则表达式，匹配正整数
-        var pattern = /^[1-9]\d*$/;
-        if (!pattern.test(this.temp.rechargeNum) && this.temp.rechargeNum != null) {
+        if(this.temp.rechargeNum == null || this.temp.rechargeNum == "" || this.temp.rechargeNum == "undefined"){
           this.$notify({
-                message: '次数/小时必须是正整数！',
+                message: '充值次数不能为空！',
                 type: 'error',
                 duration: 2000          
               })
-              return
-        }
-        if(this.temp.cardType == 1 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
-              this.$notify({
-                message: '有效年份不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-        if(this.temp.cardType == 2 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
-              this.$notify({
-                message: '有效月份不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
+              return   
         }
         this.$refs['rechargeDataForm'].validate((valid) => {      
          if (valid) {
@@ -1344,133 +1093,6 @@
           .catch(() => {
             //alert('取消')
           });
-      },
-
-      // 多选框选中数据
-      handleSelectionChange(selection) {
-        console.log("多选框选中数据");
-        // 需要根据数据情况调整id名称
-        this.cardCstCodes = selection.map(item => item.cstCode);
-        this.single = selection.length != 1;
-        this.multiple = !selection.length;
-      },
-
-      // 批量操作
-    sendCardByCstCreateModel() {
-      this.resetTemp()
-        this.cardBulkOperationDialogStatus = 'create';
-        this.cardBulkOperationDialogShow = true
-        this.$nextTick(() => {
-          this.$refs['cardBulkOperationDialogShow'].clearValidate()
-        })
-    }, 
-    
-    // 批量操作发卡、禁用、恢复
-    cardBulkOperation() {
-      if(this.cardCstCodes == null || this.cardCstCodes == "" || this.cardCstCodes == "undefined"){
-              this.$notify({
-                message: '请先勾选客户！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-
-        if(this.temp.cardId == null || this.temp.cardId == "" || this.temp.cardId == "undefined"){
-              this.$notify({
-                message: '卡不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-
-        if(this.temp.cardOption == null || this.temp.cardOption == "" || this.temp.cardOption == "undefined"){
-              this.$notify({
-                message: '卡操作不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-        //操作选择充值，次数不能为空      
-        if(this.temp.cardOption == 4 && (this.temp.totalNum == null || this.temp.totalNum == "" || this.temp.totalNum == "undefined")){
-              this.$notify({
-                message: '次数/小时不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-        // 正则表达式，匹配正整数
-        var pattern = /^[1-9]\d*$/;
-        if (!pattern.test(this.temp.totalNum) && this.temp.cardOption == 4 && this.temp.totalNum != null) {
-          this.$notify({
-                message: '次数/小时必须是正整数！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-
-        // if (this.temp.cardOption == 1 && this.temp.totalNum != null && this.temp.totalNum > 50) {
-        //   this.$notify({
-        //         message: '次数/小时不能超过50！',
-        //         type: 'error',
-        //         duration: 2000          
-        //       })
-        //       return
-        // }
-
-        if(this.temp.cardId == 1 && this.temp.cardOption == 4 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
-              this.$notify({
-                message: '有效年份不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-
-        if(this.temp.cardId == 2 && this.temp.cardOption == 4 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
-              this.$notify({
-                message: '有效月份不能为空！',
-                type: 'error',
-                duration: 2000          
-              })
-              return
-        }
-         
-        this.$refs['cardBulkOperationDataForm'].validate((valid) => {
-         if (valid) {
-            this.temp.cstCodeList = this.cardCstCodes;        
-            const tempData = Object.assign({}, this.temp)
-            tempData.timestamp = +new Date(tempData.timestamp) 
-            cardBulkOperation(tempData).then(() => {
-              const index = this.list.findIndex(v => v.id === this.temp.id)
-              this.list.splice(index, 1, this.temp)
-              this.cardBulkOperationDialogShow = false
-              this.getList();
-              this.$notify({
-                title: 'Success',
-                message: 'Successfully',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
-      },
-
-      cardCstBatchSelect(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.temp.timestamp = new Date(this.temp.timestamp)  
-        cardCstBatch(row.cardCode).then(response => {
-          this.cardCstBatchList = response.data.cardCstBatchList
-          this.cardCstBatchOperationDialogShow = true
-          setTimeout(() => {
-            this.cardCstBatchLoading = false
-          }, 1.5 * 1000)
-        })
       },
    
     }

@@ -35,15 +35,15 @@
             <span>{{ row.typeName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="数量" prop="couNum" align="center" width="120">
+        <!-- <el-table-column label="小时" prop="couNum" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.couNum }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="是否有效" prop="isExp" align="center" width="120">
           <template slot-scope="{row}">
-            <span v-if="row.isExp == 0">是</span>
-            <span v-if="row.isExp == 1">否</span>
+            <span v-if="row.isExp == 1">是</span>
+            <span v-if="row.isExp == 0">否</span>
           </template>
         </el-table-column>
         <el-table-column label="描述" prop="desc" align="center" width="120">
@@ -100,9 +100,9 @@
           <el-form-item label="标题" prop="title">
             <el-input v-model="temp.title" placeholder="标题" clearable style="width: 300px" class="filter-item"></el-input>
           </el-form-item>
-          <el-form-item label="数量" prop="couNum">
-            <el-input v-model="temp.couNum" placeholder="数量" clearable style="width: 300px" class="filter-item"></el-input> 
-          </el-form-item>
+          <!-- <el-form-item label="小时" prop="couNum">
+            <el-input v-model="temp.couNum" placeholder="请填写数字" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item> -->
           <!-- <el-date-picker
             v-model="temp.startTime"
             type="date"
@@ -111,8 +111,8 @@
         </el-date-picker> -->
           <el-form-item label="是否有效" prop="isExp">
             <el-select v-model="temp.isExp" placeholder="是否有效" clearable style="width: 300px" class="filter-item">
-              <el-option label="是" :value="0" />
-              <el-option label="否" :value="1" />
+              <el-option label="是" :value="1" />
+              <el-option label="否" :value="0" />
             </el-select>
           </el-form-item>
           <el-form-item label="描述" prop="desc">
@@ -143,9 +143,9 @@
           <el-input v-model="temp.startTime" placeholder="开始时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
         </el-form-item> -->
 
-        <el-form-item label="开始日期" prop="startTime">
+        <el-form-item label="有效月份" prop="startTime">
           <el-date-picker
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM"
             style="width: 300px"
             class="filter-item"
             v-model="temp.startTime"
@@ -155,7 +155,7 @@
           </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="结束日期" prop="endTime">
+        <!-- <el-form-item label="结束日期" prop="endTime">
           <el-date-picker
             value-format="yyyy-MM-dd"
             style="width: 300px"
@@ -165,11 +165,16 @@
             placeholder="结束日期"
             >
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
 
         <!-- <el-form-item label="结束时间" prop="endTime">
           <el-input v-model="temp.endTime" placeholder="结束时间" clearable style="width: 300px" class="filter-item"></el-input><span>（格式：2024-01-01）</span>
         </el-form-item> -->
+
+        <el-form-item label="小时" prop="couNum">
+          <el-input v-model="temp.couNum" placeholder="请填写数字" clearable style="width: 300px" class="filter-item"></el-input> 
+        </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="grantPreview(row)">
@@ -223,61 +228,84 @@
         highlight-current-row
         style="width: 100%;height: 100%;"
         @sort-change="sortChange"
-      >
-        <!-- <el-table-column label="编号" prop="id" align="center" width="160px">
-          <template slot-scope="{row}">
-            <span>{{ row.id }}</span>
-          </template>
-        </el-table-column> -->
-        <el-table-column label="券名称" prop="title" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="标签" prop="tagName" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.tagName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="分类" prop="typeName" align="center" width="120">
-          <template slot-scope="{row}">
-            <span>{{ row.typeName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="数量" prop="couNum" align="center" width="80">
-          <template slot-scope="{row}">
-            <span>{{ row.couNum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="开始日期" prop="startTime" align="center" width="90">
-          <template slot-scope="{row}">
-            <span>{{ row.startTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="结束日期" prop="endTime" align="center" width="90">
-          <template slot-scope="{row}">
-            <span>{{ row.endTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" align="center" width="140px">
-          <template slot-scope="{row}">
-            <span>{{ row.createTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" align="center" width="140px">
-          <template slot-scope="{row}">
-            <span>{{ row.updateTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="90" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
-            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="batchDelete(row,$index)">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+        >
+          <!-- <el-table-column label="编号" prop="id" align="center" width="160px">
+            <template slot-scope="{row}">
+              <span>{{ row.id }}</span>
+            </template>
+          </el-table-column> -->
+          <el-table-column label="券名称" prop="title" align="center" width="120">
+            <template slot-scope="{row}">
+              <span>{{ row.title }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="标签" prop="tagName" align="center" width="120">
+            <template slot-scope="{row}">
+              <span>{{ row.tagName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="分类" prop="typeName" align="center" width="70">
+            <template slot-scope="{row}">
+              <span>{{ row.typeName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="小时" prop="couNum" align="center" width="70">
+            <template slot-scope="{row}">
+              <span>{{ row.couNum }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="有效月份" prop="startTime" align="center" width="80">
+            <template slot-scope="{row}">
+              <span>{{ row.startTime }}</span>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="结束日期" prop="endTime" align="center" width="90">
+            <template slot-scope="{row}">
+              <span>{{ row.endTime }}</span>
+            </template>
+          </el-table-column> -->
+          <el-table-column label="创建时间" align="center" width="140px">
+            <template slot-scope="{row}">
+              <span>{{ row.createTime }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" align="center" width="140px">
+            <template slot-scope="{row}">
+              <span>{{ row.updateTime }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+            <template slot-scope="{row,$index}">
+              <el-button type="primary" size="mini" @click="rechargeCreateModel(row,$index)">
+                充值
+              </el-button>
+              <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="batchDelete(row,$index)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
+      </el-dialog>
+
+      <!-- 按批次充值 -->
+      <el-dialog :title="textMap[rechargeDialogStatus]" :visible.sync="rechargeDialogShow">
+        <el-form ref="rechargeDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
+          <el-form-item label="couponId" prop="couponId" class="is_show">
+            <el-input v-model="temp.couponId" placeholder="couponId" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>   
+          <el-form-item label="充值小时" prop="rechargeNum">
+            <el-input v-model="temp.rechargeNum" placeholder="充值小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>     
+        </el-form>  
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="rechargeDialogShow = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="rechargeDialogStatus==='create'?batchRecharge():batchRecharge()">
+            提交
+          </el-button>
+        </div>    
       </el-dialog>
 
 
@@ -285,7 +313,7 @@
   </template>
   
   <script>
-  import { couponList, couponSave, couponUpdate, couponDelete , couponGrant, couponBatchList, batchDelete} from '@/api/coupon/coupon'
+  import { couponList, couponSave, couponUpdate, couponDelete , couponGrant, couponBatchList, batchRecharge, batchDelete} from '@/api/coupon/coupon'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect, selectCstList} from '@/api/tag/tag'
@@ -347,6 +375,8 @@
         dialogStatus: '',
         grantStatus: '',
         grantPreviewStatus: '',
+        rechargeDialogStatus:'',
+        rechargeDialogShow:false,
         textMap: {
           update: 'Edit',
           create: 'Create'
@@ -358,8 +388,8 @@
           isExp: [{ required: true, message: '是否有效不能为空', trigger: 'change' }],
           couNum: [{ required: true, message: '数量不能为空', trigger: 'change' }],
           tagId: [{ required: true, message: '标签不能为空', trigger: 'change' }],
-          startTime: [{ required: true, message: '开始日期不能为空', trigger: 'change' }],
-          endTime: [{ required: true, message: '结束日期不能为空', trigger: 'change' }]
+          startTime: [{ required: true, message: '开始日期不能为空', trigger: 'change' }]
+          // endTime: [{ required: true, message: '结束日期不能为空', trigger: 'change' }]
         },
         downloadLoading: false
 
@@ -558,6 +588,55 @@
               this.$notify({
                 title: 'Success',
                 message: 'Update Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
+
+      rechargeCreateModel(row) {
+        this.temp = Object.assign({}, row) // copy obj
+        this.temp.timestamp = new Date(this.temp.timestamp)
+        this.rechargeDialogStatus = 'create'
+        this.rechargeDialogShow = true
+        this.$nextTick(() => {
+          this.$refs['rechargeDataForm'].clearValidate()
+        })
+      },
+
+      // 按批次充值
+      batchRecharge() {
+        if(this.temp.rechargeNum == null || this.temp.rechargeNum == "" || this.temp.rechargeNum == "undefined"){
+          this.$notify({
+                message: '充值小时不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return   
+        }
+        this.$refs['rechargeDataForm'].validate((valid) => {      
+         if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            tempData.timestamp = +new Date(tempData.timestamp) 
+            batchRecharge(tempData).then(() => {
+              const index = this.list.findIndex(v => v.id === this.temp.id)
+              this.list.splice(index, 1, this.temp)
+              this.rechargeDialogShow = false
+              
+              // 刷新批次列表
+              couponBatchList(this.temp.couponId).then(response => {
+              this.grantBatchList = response.data.list
+                setTimeout(() => {
+                  this.listBatchLoading = false
+                }, 1.5 * 1000)
+              })
+              // 刷新券列表
+              this.getList();
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
                 type: 'success',
                 duration: 2000
               })

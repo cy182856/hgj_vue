@@ -13,21 +13,37 @@
           <el-option label="未注册" :value="99" />
           <el-option label="已注册" :value="1" />
       </el-select>
+      <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 130px" class="filter-item">
+          <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <el-select v-model="listQuery.sendCardStatus" placeholder="是否发卡" clearable style="width: 100px;" class="filter-item">
+          <el-option label="是" :value="1" />
+          <el-option label="否" :value="0" />
+      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>
+
+      <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="" @click="sendCardByCstCreateModel()">
+        卡批量操作
+      </el-button>
+
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      @selection-change="handleSelectionChange"
       border
       fit
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
     >
+
+      <el-table-column type="selection" width="55" align="center" />
+
       <el-table-column label="项目" prop="projectName" align="center" width="130">
         <template slot-scope="{row}">
           <span>{{ row.projectName }}</span>
@@ -82,6 +98,11 @@
                  {{ val.name }}&nbsp;&nbsp;
           </span>
         </template>
+      </el-table-column>
+      <el-table-column label="卡数量" prop="cardTotalNum" align="center" width="60">
+          <template slot-scope="{row}">
+            <span>{{ row.cardTotalNum }}</span>
+          </template>
       </el-table-column>
       <!-- <el-table-column label="有效性" prop="isAffect" align="center" width="120">
         <template slot-scope="{row}">
@@ -209,7 +230,7 @@
           <el-input v-model="temp.orgId" />
         </el-form-item>
         <div style="font-size: 18px; width: 500px;">{{ temp.cstName }}</div>
-        <el-form-item style="margin-top: 20px;" label="入住身份">
+        <!-- <el-form-item style="margin-top: 20px;" label="入住身份">
           <div>
             <div v-for="intoTypeOption in intoTypeOptions" :key="intoTypeOption.intoTypeId" @change="cleanHouseOption()">
               <input
@@ -219,6 +240,21 @@
                 v-model="selectedIntoOption"
               />
               <label :for="intoTypeOption.intoTypeId">{{ intoTypeOption.text }}</label>
+            </div>
+            <p>选中的是：{{ selectedIntoOption }}</p>
+          </div>
+        </el-form-item> -->
+
+        <el-form-item style="margin-top: 20px;" label="入住身份">
+          <div>
+            <div v-for="intoTypeOption in identityOptions" :key="intoTypeOption.id" @change="cleanHouseOption()">
+              <input
+                type="radio"
+                :id="intoTypeOption.id"
+                :value="intoTypeOption.code"
+                v-model="selectedIntoOption"
+              />
+              <label :for="intoTypeOption.id">{{ intoTypeOption.webDesc }}</label>
             </div>
             <!-- <p>选中的是：{{ selectedIntoOption }}</p> -->
           </div>
@@ -243,6 +279,94 @@
       </div>
     </el-dialog>
 
+    <!-- 批量操作 -->
+    <el-dialog :title="textMap[cardBulkOperationDialogStatus]" :visible.sync="cardBulkOperationDialogShow">
+        <el-form ref="cardBulkOperationDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
+          <el-form-item label="选择卡" prop="cardId">
+            <el-select v-model="temp.cardId" placeholder="选择卡" clearable style="width: 300px" class="filter-item">
+              <el-option v-for="item in cardOptions" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>  
+
+          <el-form-item style="margin-top: 20px;" label="卡操作">
+            <el-radio-group v-model="temp.cardOption" class="radio-group">
+              <el-radio :label=1>发卡</el-radio>
+              <!-- <el-radio :label=2>禁用</el-radio>
+              <el-radio :label=3>恢复</el-radio> -->
+            </el-radio-group>
+          </el-form-item>
+
+          <!-- <el-form-item label="卡类型" prop="cardType">
+          <el-select v-model="temp.cardType" placeholder="卡类型" clearable style="width: 300px;" class="filter-item">
+            <el-option label="年卡" :value="1" />
+            <el-option label="月卡" :value="2" />
+          </el-select>
+          </el-form-item> -->
+
+          <!-- <el-form-item v-if="temp.cardOption == 1" label="次数/小时" prop="totalNum">
+            <el-input v-model="temp.totalNum" placeholder="次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>      -->
+
+          <el-form-item v-if="temp.cardId == 1 && temp.cardOption == 1" label="有效年份" prop="expDate">
+            <el-date-picker
+              value-format="yyyy"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.expDate"
+              type="year"
+              placeholder="有效年份"
+              >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item v-if="temp.cardId == 2 && temp.cardOption == 1" label="有效月份" prop="expDate">
+            <el-date-picker
+              value-format="yyyy-MM"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.expDate"
+              type="month"
+              placeholder="有效月份"
+              >
+            </el-date-picker>
+          </el-form-item>
+
+          <!-- <el-form-item label="开始日期" prop="startTime">
+            <el-date-picker
+              value-format="yyyy-MM-dd"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.startTime"
+              type="date"
+              placeholder="开始日期"
+              >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item label="结束日期" prop="endTime">
+            <el-date-picker
+              value-format="yyyy-MM-dd"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.endTime"
+              type="date"
+              placeholder="结束日期"
+              >
+            </el-date-picker>
+          </el-form-item> -->
+
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="cardBulkOperationDialogShow = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="cardBulkOperationDialogStatus==='create'?cardBulkOperation():cardBulkOperation()">
+            提交
+          </el-button>
+        </div>
+      </el-dialog>
+
+
   </div>
 </template>
 
@@ -253,6 +377,10 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import { selectMenuMini } from '@/api/user/user-menu'
 import { project } from '@/api/config/config'
 import { houseSelect} from '@/api/house/house'
+import { identitySelect } from '@/api/identity/identity'
+import { cardSelect} from '@/api/card/card'
+import { cardBulkOperation } from '@/api/card/card-cst'
+import { cardTypeSelect} from '@/api/card/card-type'
 
 export default {
   name: 'ComplexTable',
@@ -274,19 +402,30 @@ export default {
   data() {
     return {
       selectedIntoOption: null,
-      intoTypeOptions: [
-        { intoTypeId: '1', intoTypeValue: '0', text: '租户(办公楼)' },
-        { intoTypeId: '2', intoTypeValue: '1', text: '租户员工(办公楼)' },
-        { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
-        { intoTypeId: '4', intoTypeValue: '3', text: '租客(住宅)' },
-        { intoTypeId: '5', intoTypeValue: '4', text: '同住人(住宅)' },     
-      ],
+      // intoTypeOptions: [
+      //   { intoTypeId: '1', intoTypeValue: '0', text: '租户(办公楼)' },
+      //   { intoTypeId: '2', intoTypeValue: '1', text: '租户员工(办公楼)' },
+      //   { intoTypeId: '3', intoTypeValue: '2', text: '产权人(住宅)' },
+      //   { intoTypeId: '4', intoTypeValue: '3', text: '租客(住宅)' },
+      //   { intoTypeId: '5', intoTypeValue: '4', text: '同住人(住宅)' },     
+      // ],
+
+      // 选中数组
+      cstCodeList: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      cardBulkOperationDialogShow:false,
+      cardOptions:null,
       webExpandedKeys:[],
       webCheckedKeys:[],
       selectedWebCheckedKeys:[],
       weComExpandedKeys:[],
       weComCheckedKeys:[],
       selectedWeComCheckedKeys:[],
+      cardTypeOptions:null,
+      identityOptions:null,
       roleOptions:null,
       projectOptions:null,
       serchRoleOptions:null,
@@ -394,6 +533,18 @@ export default {
       // 项目
       project().then(response => {
         this.projectOptions = response.data.list
+      })
+      // 身份
+      identitySelect().then(response => {
+        this.identityOptions = response.data.list
+      }) 
+      // 卡 
+      cardSelect().then(response => {
+        this.cardOptions = response.data.list
+      })  
+      // 卡类型
+      cardTypeSelect().then(response => {
+          this.cardTypeOptions = response.data.list
       })  
     },
     resetTemp() {
@@ -532,7 +683,114 @@ export default {
       //   return item.id;
       // });  
     },
- 
+
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      console.log("多选框选中数据");
+      // 需要根据数据情况调整id名称
+      this.cstCodeList = selection.map(item => item.code);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
+    },
+    
+    // 批量操作
+    sendCardByCstCreateModel() {
+      this.resetTemp()
+        this.cardBulkOperationDialogStatus = 'create';
+        this.cardBulkOperationDialogShow = true
+        this.$nextTick(() => {
+          this.$refs['cardBulkOperationDialogShow'].clearValidate()
+        })
+    }, 
+    
+    // 批量操作发卡、禁用、恢复
+    cardBulkOperation() {
+      if(this.cstCodeList == null || this.cstCodeList == "" || this.cstCodeList == "undefined"){
+              this.$notify({
+                message: '请先勾选客户！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+
+        if(this.temp.cardId == null || this.temp.cardId == "" || this.temp.cardId == "undefined"){
+              this.$notify({
+                message: '卡不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+
+        if(this.temp.cardOption == null || this.temp.cardOption == "" || this.temp.cardOption == "undefined"){
+              this.$notify({
+                message: '卡操作不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        // 操作选择发卡，次数不能为空      
+        // if(this.temp.cardOption == 1 && (this.temp.totalNum == null || this.temp.totalNum == "" || this.temp.totalNum == "undefined")){
+        //       this.$notify({
+        //         message: '次数/小时不能为空！',
+        //         type: 'error',
+        //         duration: 2000          
+        //       })
+        //       return
+        // }
+        // 正则表达式，匹配正整数
+        // var pattern = /^[1-9]\d*$/;
+        // if (!pattern.test(this.temp.totalNum) && this.temp.cardOption == 1 && this.temp.totalNum != null) {
+        //   this.$notify({
+        //         message: '次数/小时必须是正整数！',
+        //         type: 'error',
+        //         duration: 2000          
+        //       })
+        //       return
+        // }
+
+        if(this.temp.cardId == 1 && this.temp.cardOption == 1 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+              this.$notify({
+                message: '有效年份不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+
+        if(this.temp.cardId == 2 && this.temp.cardOption == 1 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+              this.$notify({
+                message: '有效月份不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        
+        
+        this.$refs['cardBulkOperationDataForm'].validate((valid) => {
+         if (valid) {
+            this.temp.cstCodeList = this.cstCodeList;        
+            const tempData = Object.assign({}, this.temp)
+            tempData.timestamp = +new Date(tempData.timestamp) 
+            cardBulkOperation(tempData).then(() => {
+              const index = this.list.findIndex(v => v.id === this.temp.id)
+              this.list.splice(index, 1, this.temp)
+              this.cardBulkOperationDialogShow = false
+              this.getList();
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
+    
   }
 }
 </script>

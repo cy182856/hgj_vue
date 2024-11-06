@@ -17,6 +17,14 @@ export function sendCardByCst(data) {
   })
 }
 
+export function cardBulkOperation(data) {
+  return request({
+    url: url + '/cardCst/cardBulkOperation',
+    method: 'post',
+    data
+  })
+}
+
 export function rechargeByTag(data) {
   return request({
     url: url + '/cardCst/rechargeByTag',

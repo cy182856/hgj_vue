@@ -42,6 +42,13 @@ export function batchDelete(id) {
   })
 }
 
+export function batchRecharge(data) {
+  return request({
+    url: url + '/coupon/batchRecharge',
+    method: 'post',
+    data
+  })
+}
 
 export function couponGrant(data) {
   return request({

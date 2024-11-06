@@ -327,7 +327,7 @@ export default {
       projectSelect().then(response => {
         this.projectOptions = response.data.list
       })  
-       // 身份
+      // 身份
       identitySelect().then(response => {
           this.identityOptions = response.data.list
       })  

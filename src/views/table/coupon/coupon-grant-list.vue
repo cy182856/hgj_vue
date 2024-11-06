@@ -51,14 +51,14 @@
             <span>{{ row.typeName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="总量" prop="couNum" align="center" width="80">
+        <el-table-column label="总时长(小时)" prop="couNum" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.couNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="可用数量" prop="expNum" align="center" width="80">
+        <el-table-column label="已用时长(小时)" prop="applyNum" align="center" width="110">
           <template slot-scope="{row}">
-            <span>{{ row.expNum }}</span>
+            <span>{{ row.applyNum }}</span>
           </template>
         </el-table-column>
         <el-table-column label="客户编号" prop="cstCode" align="center" width="150">
@@ -71,7 +71,7 @@
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="微信号" prop="wxOpenId" align="center" width="160">
+        <!-- <el-table-column label="微信号" prop="wxOpenId" align="center" width="160">
           <template slot-scope="{row}">
             <span>{{ row.wxOpenId }}</span>
           </template>
@@ -80,17 +80,17 @@
           <template slot-scope="{row}">
             <span>{{ row.userName }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="开始时间" prop="startTime" align="center" width="90">
+        </el-table-column> -->
+        <el-table-column label="有效月份" prop="startTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.startTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" prop="startTime" align="center" width="90">
+        <!-- <el-table-column label="结束时间" prop="startTime" align="center" width="90">
           <template slot-scope="{row}">
             <span>{{ row.endTime }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="创建时间" align="center" width="140px">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>

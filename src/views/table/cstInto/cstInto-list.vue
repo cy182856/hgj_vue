@@ -7,12 +7,15 @@
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
+        <!-- <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
             <el-option label="租户" :value="0" />
             <el-option label="租户员工" :value="1" />
             <el-option label="产权人" :value="2" />
             <el-option label="租客" :value="3" />
             <el-option label="同住人" :value="4" />
+        </el-select> -->
+        <el-select v-model="listQuery.intoRole" placeholder="身份" clearable style="width: 140px" class="filter-item">
+              <el-option v-for="item in identityOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
         <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 140px;" class="filter-item">
             <el-option label="未注册" :value="0" />
@@ -184,6 +187,7 @@
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { projectSelect } from '@/api/config/config'
+  import { identitySelect } from '@/api/identity/identity'
   
   export default {
     name: 'ComplexTable',
@@ -207,6 +211,7 @@
         projectOptions:null,
         roleOptions:null,
         serchRoleOptions:null,
+        identityOptions:null,
         readonly: true,
         tableKey: 0,
         list: null,
@@ -331,7 +336,11 @@
         // 项目
         projectSelect().then(response => {
           this.projectOptions = response.data.list
-        })  
+        })
+        // 身份
+        identitySelect().then(response => {
+          this.identityOptions = response.data.list
+      })  
       },
      
       handleDelete(row, index) {

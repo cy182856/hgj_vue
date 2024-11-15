@@ -7,10 +7,3 @@ export function identitySelect() {
     method: 'get'
   })
 }
-
-
-
-
-
-
-

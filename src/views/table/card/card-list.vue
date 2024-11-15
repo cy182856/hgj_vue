@@ -1,15 +1,15 @@
 <template>
     <div class="app-container">
       <div class="filter-container">
-        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 160px" class="filter-item">
+        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 140px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
-        <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 130px" class="filter-item">
+        <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 140px" class="filter-item">
             <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-date-picker
           value-format="yyyy-MM-dd"
           style="width: 140px"
@@ -29,11 +29,11 @@
           placeholder="有效结束日期"
         >
         </el-date-picker>
-        <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 80px;" class="filter-item">
+        <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 140px;" class="filter-item">
           <el-option label="有效" :value=1 />
           <el-option label="无效" :value=0 />
         </el-select>
-        <el-select v-model="listQuery.expNum" placeholder="剩余" clearable style="width: 80px;" class="filter-item">
+        <el-select v-model="listQuery.expNum" placeholder="剩余" clearable style="width: 140px;" class="filter-item">
           <el-option label="有" :value=1 />
           <el-option label="无" :value=0 />
         </el-select>

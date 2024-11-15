@@ -2,21 +2,21 @@
   <div class="app-container">
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
-      <el-select v-model="listQuery.orgId" placeholder="项目" clearable style="width: 200px" class="filter-item">
+      <el-select v-model="listQuery.orgId" placeholder="项目" clearable style="width: 160px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
       </el-select>
-      <el-input v-model="listQuery.code" placeholder="客户编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.code" placeholder="客户编号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!-- <el-input v-model="listQuery.cerNo" placeholder="证件号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <!-- <el-input v-model="listQuery.licNo" placeholder="执照号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
-      <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 200px;" class="filter-item">
+      <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 160px;" class="filter-item">
           <el-option label="未注册" :value="99" />
           <el-option label="已注册" :value="1" />
       </el-select>
-      <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 130px" class="filter-item">
+      <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 160px" class="filter-item">
           <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-select v-model="listQuery.sendCardStatus" placeholder="是否发卡" clearable style="width: 100px;" class="filter-item">
+      <el-select v-model="listQuery.sendCardStatus" placeholder="是否发卡" clearable style="width: 160px;" class="filter-item">
           <el-option label="是" :value="1" />
           <el-option label="否" :value="0" />
       </el-select>

@@ -43,11 +43,14 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">          
-            <el-button type="primary" size="mini"  @click="menuTreeCreate(row)">
+            <el-button type="primary" size="mini" @click="menuTreeCreate(row)">
               选择客户
-            </el-button>         
+            </el-button>  
+            <el-button type="primary" size="mini" @click="selectIdentity(row)">
+              选择身份
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,6 +86,32 @@
           </el-button>
         </div>
       </el-dialog>
+
+      <el-dialog :title="textMap[identityDialogStatus]" :visible.sync="identityDialogShow">
+        <el-form ref="identityDataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+          
+          <el-form-item label="项目" prop="proNums">
+            <el-select v-model="temp.proNums" placeholder="项目" clearable multiple style="width: 500px" class="filter-item">
+              <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="身份" prop="identityCodes">
+            <el-select v-model="temp.identityCodes" placeholder="身份" clearable multiple style="width: 500px" class="filter-item">
+              <el-option v-for="item in identityOptions" :key="item.code" :label="item.name" :value="item.code" />
+            </el-select>
+          </el-form-item>     
+          
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="identityDialogShow = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="identityDialogStatus==='身份选择'?saveIdentityMenu():saveIdentityMenu()">
+            提交
+          </el-button>
+        </div>
+      </el-dialog>
   
     </div>
   </template>
@@ -92,6 +121,9 @@
 
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+  import { projectSelect } from '@/api/config/config'
+  import { identitySelect } from '@/api/identity/identity'
+  import { saveIdentityMenu } from '@/api/identity/identity-menu'
   
   export default {
     name: 'ComplexTable',
@@ -113,6 +145,8 @@
     },
     data() {
       return {
+        projectOptions:null,
+        identityOptions:null,
         roleOptions:null,
         serchRoleOptions:null,
         readonly: true,
@@ -134,8 +168,10 @@
           status: 'published'
         },
         dialogFormVisible: false,
+        identityDialogShow: false,
         cstTree: false,
         dialogStatus: '',
+        identityDialogStatus:'',
         textMap: {
           update: 'Edit',
           create: 'Create'
@@ -154,7 +190,9 @@
     },
     created() {
       this.getList()
+      this.getSelectList()
     },
+   
     methods: {
       getList() {
         this.listLoading = false
@@ -167,6 +205,18 @@
         })
       },  
   
+       // 获取下拉菜单数据
+      getSelectList(){  
+        // 项目
+        projectSelect().then(response => {
+          this.projectOptions = response.data.list
+        })       
+        // 身份
+        identitySelect().then(response => {
+          this.identityOptions = response.data.list
+        })
+      },
+
       handleFilter() {
         this.listQuery.page = 1
         this.getList()
@@ -217,8 +267,7 @@
           this.miniMenuCheckedKeys=response.data.miniMenuCheckedKeys       
         })
         
-      },
-  
+      }, 
       
       //获取用户勾选的客户编号用于传参后台
       getCheckedNodes() {
@@ -242,6 +291,35 @@
             })
         })
       },
+
+      selectIdentity(row) {
+        this.resetTemp()
+        this.identityDialogStatus = '身份选择'
+        this.identityDialogShow = true
+        this.$nextTick(() => {
+          this.$refs['identityDataForm'].clearValidate()
+        })
+        this.temp.menuId = row.id
+      },
+
+      saveIdentityMenu() {
+        this.$refs['identityDataForm'].validate((valid) => {
+          if (valid) {
+            const tempData = Object.assign({}, this.temp)                          
+            tempData.timestamp = +new Date(tempData.timestamp)
+            saveIdentityMenu(tempData).then((response) => {
+              this.identityDialogShow = false
+              this.getList()
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      }
    
     }
   }

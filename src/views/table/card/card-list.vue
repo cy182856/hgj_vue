@@ -11,11 +11,11 @@
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-date-picker
-          value-format="yyyy-MM-dd"
+          value-format="HH:mm:ss"
           style="width: 140px"
           class="filter-item"
           v-model="listQuery.startTime"
-          type="date"
+          type="datetime"
           placeholder="有效开始日期"
           >
         </el-date-picker>
@@ -1478,9 +1478,9 @@
   </script>
   
   <style>
-      .is_show{
+    .is_show{
           display: none;
-      }
+    }
     .el-col {
       border-radius: 4px;
     }

@@ -9,6 +9,14 @@ export function saveIdentityMenu(data) {
   })
 }
 
+export function identityMenuList(menuId) {
+  return request({
+    url: url + '/identity/menu/identityMenuList',
+    method: 'get',
+    params: { menuId }
+  })
+}
+
 
 
 

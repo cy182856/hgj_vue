@@ -91,7 +91,7 @@
         <el-form ref="identityDataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
           
           <el-form-item label="项目" prop="proNums">
-            <el-select v-model="temp.proNums" placeholder="项目" clearable multiple style="width: 500px" class="filter-item">
+            <el-select v-model="temp.proNums" placeholder="项目" clearable multiple style="width: 500px" class="filter-item" @change="proNumChange($event)">
               <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
             </el-select>
           </el-form-item>
@@ -122,8 +122,8 @@
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { projectSelect } from '@/api/config/config'
-  import { identitySelect } from '@/api/identity/identity'
-  import { saveIdentityMenu } from '@/api/identity/identity-menu'
+  import { identitySelect, identitySelectByProNums } from '@/api/identity/identity'
+  import { saveIdentityMenu, identityMenuList } from '@/api/identity/identity-menu'
   
   export default {
     name: 'ComplexTable',
@@ -212,7 +212,17 @@
           this.projectOptions = response.data.list
         })       
         // 身份
-        identitySelect().then(response => {
+        // identitySelect().then(response => {
+        //   this.identityOptions = response.data.list
+        // })
+      },
+
+      proNumChange(proNums){
+        this.identityOptions = null;
+        this.temp.identityCodes = null;
+        // 身份,根据所选项目查询身份
+        this.temp.proNums = proNums;    
+        identitySelectByProNums(this.temp).then(response => {
           this.identityOptions = response.data.list
         })
       },
@@ -293,16 +303,41 @@
       },
 
       selectIdentity(row) {
-        this.resetTemp()
+        //this.resetTemp()
         this.identityDialogStatus = '身份选择'
         this.identityDialogShow = true
         this.$nextTick(() => {
           this.$refs['identityDataForm'].clearValidate()
         })
+        // 根据菜单code查询已选择的项目、身份
         this.temp.menuId = row.id
+        identityMenuList(this.temp.menuId).then(response => {
+          this.temp.proNums = response.data.proNumList
+          this.temp.identityCodes = response.data.identityCodeList
+          // 根据已选择项目查询身份
+          identitySelectByProNums(this.temp).then(response => {
+            this.identityOptions = response.data.list
+          })
+        })  
       },
 
       saveIdentityMenu() {
+        // if(this.temp.proNums == null || this.temp.proNums == "" || this.temp.proNums == "undefined"){
+        //   this.$notify({
+        //         message: '项目不能为空！',
+        //         type: 'error',
+        //         duration: 2000          
+        //   })
+        //   return  
+        // }
+        // if(this.temp.identityCodes == null || this.temp.identityCodes == "" || this.temp.identityCodes == "undefined"){
+        //   this.$notify({
+        //         message: '身份不能为空！',
+        //         type: 'error',
+        //         duration: 2000          
+        //   })
+        //   return  
+        // }
         this.$refs['identityDataForm'].validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.temp)                          

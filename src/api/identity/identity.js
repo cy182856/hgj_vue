@@ -7,3 +7,11 @@ export function identitySelect() {
     method: 'get'
   })
 }
+
+export function identitySelectByProNums(data) {
+  return request({
+    url: url + '/identity/selectByProNums',
+    method: 'post',
+    data
+  })
+}

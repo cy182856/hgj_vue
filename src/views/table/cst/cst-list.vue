@@ -7,6 +7,8 @@
       </el-select>
       <el-input v-model="listQuery.code" placeholder="客户编号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cstTag" placeholder="客户标签" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.resName" placeholder="房间号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!-- <el-input v-model="listQuery.cerNo" placeholder="证件号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <!-- <el-input v-model="listQuery.licNo" placeholder="执照号码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <el-select v-model="listQuery.intoStatus" placeholder="注册状态" clearable style="width: 160px;" class="filter-item">
@@ -20,6 +22,7 @@
           <el-option label="是" :value="1" />
           <el-option label="否" :value="0" />
       </el-select>
+      <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 160px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
         查询
       </el-button>
@@ -70,11 +73,16 @@
           <span v-if="row.intoStatus == 1 ">已注册</span>
         </template>
       </el-table-column>  
-      <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
+      <!-- <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
           <template slot-scope="{row}">
             <span v-for=" (val, key) in row.houseList" :key="key">
                   <span>{{ val }}&nbsp;&nbsp;</span>
               </span>          
+          </template>
+      </el-table-column> -->
+      <el-table-column :show-overflow-tooltip='true' label="房间号" prop="resName" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.resName }}</span>          
           </template>
       </el-table-column>
       <!-- <el-table-column label="证件号码" prop="cerNo" align="center" width="160">
@@ -92,16 +100,26 @@
           <span>{{ row.cstLevel }}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="70">
+      <!-- <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="tagName" align="center" width="70">
         <template slot-scope="{row}">
           <span v-for=" (val, key) in row.tagList" :key="key">
                  {{ val.name }}&nbsp;&nbsp;
           </span>
         </template>
+      </el-table-column> -->
+      <el-table-column :show-overflow-tooltip='true' label="客户标签" prop="cstTag" align="center" width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.cstTag }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="卡数量" prop="cardTotalNum" align="center" width="60">
           <template slot-scope="{row}">
             <span>{{ row.cardTotalNum }}</span>
+          </template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip='true' label="卡号" prop="cardCode" align="center" width="160">
+          <template slot-scope="{row}">
+            <span>{{ row.cardCode }}</span>
           </template>
       </el-table-column>
       <!-- <el-table-column label="有效性" prop="isAffect" align="center" width="120">
@@ -164,11 +182,11 @@
       <div align="center">
         <img :src = imgUrl style="height: 300px;width: 350px;"/>
       </div>
-      <div style="margin-left: 29%; font-size: 15px; width: 305px; font-weight: bold;">{{this.temp.cstName}}</div> 
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">入住身份：</span>{{intoRole}}</div>    
-      <div style="margin-left: 29%; font-size: 12px; width: 305px; margin-top: 10px;"><span style="font-weight: bold;">房间号：</span>{{houseList}}</div>  
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">生成时间：</span>{{qrCreateTime}}</div>  
-      <div style="margin-left: 29%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">有效截止时间：</span>{{qrCutOffTime}}</div> 
+      <div style="margin-left: 34%; font-size: 15px; width: 300px; font-weight: bold;">{{this.temp.cstName}}</div> 
+      <div style="margin-left: 34%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">入住身份：</span>{{intoRole}}</div>    
+      <div style="margin-left: 34%; font-size: 12px; width: 300px; margin-top: 10px;"><span style="font-weight: bold;">房间号：</span>{{houseList}}</div>  
+      <div style="margin-left: 34%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">生成时间：</span>{{qrCreateTime}}</div>  
+      <div style="margin-left: 34%; font-size: 12px; margin-top: 10px;"><span style="font-weight: bold;">有效截止时间：</span>{{qrCutOffTime}}</div> 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消

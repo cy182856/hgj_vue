@@ -1,21 +1,21 @@
 <template>
     <div class="app-container">
       <div class="filter-container">
-        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 140px" class="filter-item">
+        <el-select v-model="proNum" placeholder="项目" clearable style="width: 140px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
-        <el-select v-model="listQuery.cardType" placeholder="卡类型" clearable style="width: 140px" class="filter-item">
+        <el-select v-model="cardType" placeholder="类型" clearable style="width: 140px" class="filter-item">
             <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cardCode" placeholder="编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-date-picker
-          value-format="HH:mm:ss"
+        <!-- <el-date-picker
+          value-format="yyyy-MM-dd"
           style="width: 140px"
           class="filter-item"
           v-model="listQuery.startTime"
-          type="datetime"
+          type="date"
           placeholder="有效开始日期"
           >
         </el-date-picker>
@@ -28,7 +28,47 @@
           type="date"
           placeholder="有效结束日期"
         >
+        </el-date-picker> -->
+        <el-date-picker v-if="this.cardType == 1"
+          value-format="yyyy"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.startExpDate"
+          type="year"
+          placeholder="有效期开始日期"
+          >
         </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 1"
+          value-format="yyyy"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.endExpDate"
+          type="year"
+          placeholder="有效期结束日期"
+        >
+        </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 2"
+          value-format="yyyy-MM"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.startExpDate"
+          type="month"
+          placeholder="有效期开始日期"
+          >
+        </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 2"
+          value-format="yyyy-MM"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.endExpDate"
+          type="month"
+          placeholder="有效期结束日期"
+        >
+        </el-date-picker>
+
         <el-select v-model="listQuery.isExp" placeholder="状态" clearable style="width: 140px;" class="filter-item">
           <el-option label="有效" :value=1 />
           <el-option label="无效" :value=0 />
@@ -70,32 +110,32 @@
       >
         <el-table-column type="selection" width="55" align="center" />
 
+        <el-table-column label="编号" prop="cardCode" align="center" width="170px">
+          <template slot-scope="{row}">
+            <span>{{ row.cardCode }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="项目" prop="proName" align="center" width="100px">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡类型" prop="cardTypeName" align="center" width="80px">
+        <el-table-column label="类型" prop="cardTypeName" align="center" width="80px">
           <template slot-scope="{row}">
             <span>{{ row.cardTypeName }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="卡号" prop="cardCode" align="center" width="170px">
-          <template slot-scope="{row}">
-            <span>{{ row.cardCode }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="卡名称" prop="cardName" align="center" width="100">
+        </el-table-column>       
+        <!-- <el-table-column label="名称" prop="cardName" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.cardName }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="客户编号" prop="cstCode" align="center" width="110">
           <template slot-scope="{row}">
             <span>{{ row.cstCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" prop="cstName" align="center" width="120">
+        <el-table-column label="客户名称" prop="cstName" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
           </template>
@@ -683,8 +723,10 @@
         return calendarTypeKeyValue[type]
       }
     },
-    data() {
+    data() {      
       return {
+        proNum:'',
+        cardType:'',
         // 选中数组
         cardCstCodes: [],
         // 非单个禁用
@@ -756,13 +798,17 @@
 
       }
     },
-    created() {
-      this.getList()
+    created() {  
       this.getSelectList()
+     // this.getList()
+     // this.handleFilter()
+
     },
     methods: {
       getList() {
         this.listLoading = false
+        this.listQuery.proNum = this.proNum;
+        this.listQuery.cardType = this.cardType;
         cardCstList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total  
@@ -777,19 +823,26 @@
         // 项目
         projectSelect().then(response => {
           this.projectOptions = response.data.list
+          this.proNum = this.projectOptions[0].projectNum
+
+          // 卡类型
+          cardTypeSelect().then(response => {
+            this.cardTypeOptions = response.data.list
+            this.cardType = this.cardTypeOptions[0].id
+            this.handleFilter()
+          })  
+
         })  
         // 卡 
         cardSelect().then(response => {
           this.cardOptions = response.data.list
         })  
-        // 卡类型
-        cardTypeSelect().then(response => {
-          this.cardTypeOptions = response.data.list
-        })  
+        
         // 标签
         tagSelect().then(response => {
           this.tagOptions = response.data.list
-        })       
+        })    
+          
       },
       
       // 选择客户
@@ -1253,6 +1306,22 @@
       },
 
       handleFilter() {
+        if(this.proNum == null || this.proNum == "" || this.proNum == "undefined"){
+              this.$notify({
+                message: '请选择项目！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        if(this.cardType == null || this.cardType == "" || this.cardType == "undefined"){
+              this.$notify({
+                message: '请选择类型！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
         this.listQuery.page = 1
         this.getList()
       },

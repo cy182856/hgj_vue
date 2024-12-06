@@ -2,12 +2,55 @@
   <div class="app-container">
 
     <div class="filter-container">
-        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 160px" class="filter-item">
+        <el-select v-model="proNum" placeholder="项目" clearable style="width: 160px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+        </el-select>
+        <el-select v-model="cardType" placeholder="类型" clearable style="width: 140px" class="filter-item">
+            <el-option v-for="item in cardTypeOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+
+        <el-date-picker v-if="this.cardType == 1"
+          value-format="yyyy"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.startExpDate"
+          type="year"
+          placeholder="有效期开始日期"
+          >
+        </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 1"
+          value-format="yyyy"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.endExpDate"
+          type="year"
+          placeholder="有效期结束日期"
+        >
+        </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 2"
+          value-format="yyyy-MM"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.startExpDate"
+          type="month"
+          placeholder="有效期开始日期"
+          >
+        </el-date-picker>
+
+        <el-date-picker v-if="this.cardType == 2"
+          value-format="yyyy-MM"
+          style="width: 160px"
+          class="filter-item"
+          v-model="listQuery.endExpDate"
+          type="month"
+          placeholder="有效期结束日期"
+        >
+        </el-date-picker>
 
         <el-date-picker
           value-format="yyyy-MM-dd"
@@ -15,7 +58,7 @@
           class="filter-item"
           v-model="listQuery.startDate"
           type="date"
-          placeholder="开始日期"
+          placeholder="创建时间开始日期"
           >
         </el-date-picker>
 
@@ -25,7 +68,7 @@
           class="filter-item"
           v-model="listQuery.endDate"
           type="date"
-          placeholder="结束日期"
+          placeholder="创建时间结束日期"
         >
         </el-date-picker>
 
@@ -74,15 +117,25 @@
           <span>{{ row.billNum }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="有效期" prop="expDate" align="center" width="100px">
+        <template slot-scope="{ row }">
+          <span>{{ row.expDate }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="账单类型" prop="billType" align="center" width="100px">
         <template slot-scope="{ row }">
           <span v-if="row.billType == 1">充值</span>
           <span v-if="row.billType == 2">扣减</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" prop="userName" align="center" width="100px">
+      <el-table-column label="充值操作人" prop="userName" align="center" width="100px">
         <template slot-scope="{ row }">
           <span>{{ row.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="扣减操作人" prop="intoName" align="center" width="100px">
+        <template slot-scope="{ row }">
+          <span>{{ row.intoName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="150">
@@ -98,6 +151,9 @@
       
     </el-table>
 
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
+
   </div>
 </template>
   
@@ -106,6 +162,7 @@ import { cardBillList } from "@/api/card/card-cst-bill";
 import waves from "@/directive/waves"; // waves directive
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 import { projectSelect } from '@/api/config/config'
+import { cardTypeSelect} from '@/api/card/card-type'
 
 export default {
   name: "ComplexTable",
@@ -126,6 +183,9 @@ export default {
   },
   data() {
     return {
+      proNum:'',
+      cardType:'',
+      cardTypeOptions:null,
       projectOptions:null,
       readonly: true,
       tableKey: 0,
@@ -170,12 +230,14 @@ export default {
     };
   },
   created() {
-    this.getList();
+    //this.getList();
     this.getSelectList();
   },
   methods: {
     getList() {
       this.listLoading = false;
+      this.listQuery.proNum = this.proNum;
+      this.listQuery.cardType = this.cardType;
       cardBillList(this.listQuery).then((response) => {
         this.list = response.data.pageInfo.list;
         this.total = response.data.pageInfo.total;
@@ -191,9 +253,33 @@ export default {
       // 项目
       projectSelect().then(response => {
         this.projectOptions = response.data.list
+        this.proNum = this.projectOptions[0].projectNum
+
+        // 卡类型
+        cardTypeSelect().then(response => {
+          this.cardTypeOptions = response.data.list
+          this.cardType = this.cardTypeOptions[0].id
+          this.handleFilter()
+        })  
       })  
     },
     handleFilter() {
+      if(this.proNum == null || this.proNum == "" || this.proNum == "undefined"){
+              this.$notify({
+                message: '请选择项目！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+      }
+      if(this.cardType == null || this.cardType == "" || this.cardType == "undefined"){
+              this.$notify({
+                message: '请选择类型！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+      }
       this.listQuery.page = 1;
       this.getList();
     },

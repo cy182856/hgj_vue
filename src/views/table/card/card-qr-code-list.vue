@@ -154,7 +154,7 @@
               <span v-if="row.isUnlock == 4" >出门</span>
             </template>
           </el-table-column>
-          <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="150">
+          <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="160">
             <template slot-scope="{row}">
               <span>{{ row.openDoorTime }}</span>
             </template>

@@ -11,6 +11,10 @@
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.billType" placeholder="账单类型" clearable style="width: 160px;" class="filter-item">
+          <el-option label="充值" :value="1" />
+          <el-option label="扣减" :value="2" />
+        </el-select>
 
         <el-date-picker v-if="this.cardType == 1"
           value-format="yyyy"

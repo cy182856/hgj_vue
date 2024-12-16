@@ -10,6 +10,7 @@
         <el-input v-model="listQuery.cardCode" placeholder="编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.resName" placeholder="房间号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <!-- <el-date-picker
           value-format="yyyy-MM-dd"
           style="width: 140px"
@@ -135,11 +136,16 @@
             <span>{{ row.cstCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" prop="cstName" align="center" width="150">
+        <el-table-column label="客户名称" prop="cstName" align="center" width="160">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>   
+        <el-table-column label="房间号" prop="resName" align="center" width="160">
+          <template slot-scope="{row}">
+            <span>{{ row.resName }}</span>
+          </template>
+        </el-table-column>  
         <el-table-column label="剩余" prop="expNum" align="center" width="50">
           <template slot-scope="{row}">
             <span>{{ row.expNum }}</span>

@@ -5,9 +5,9 @@
         <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 160px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
-        <el-select v-model="listQuery.isExpire" placeholder="是否有效" clearable style="width: 140px" class="filter-item">
-          <el-option label="是" :value="1" />
-          <el-option label="否" :value="0" />
+        <el-select v-model="listQuery.type" placeholder="来源" clearable style="width: 140px" class="filter-item">
+          <el-option label="智慧管家" :value="1" />
+          <el-option label="客服" :value="2" />
         </el-select>
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -62,7 +62,7 @@
             <span>{{ row.proName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡号" prop="cardNo" align="center" width="140">
+        <el-table-column label="卡号" prop="cardNo" align="center" width="130">
           <template slot-scope="{row}">
             <span>{{ row.cardNo }}</span>
           </template>
@@ -80,12 +80,6 @@
         <el-table-column label="客户名称" prop="cstName" align="center" width="110">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="是否有效" prop="isExpire" align="center" width="80">
-          <template slot-scope="{row}">
-            <span v-if="row.isExpire == 1">有效</span>
-            <span v-if="row.isExpire == 0">无效</span>
           </template>
         </el-table-column>
         <el-table-column label="小区号" prop="neighNo" align="center" width="110">
@@ -108,14 +102,14 @@
             <span>{{ row.resCode }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="创建人" prop="serviceName" align="center" width="90">
+          <template slot-scope="{row}">
+            <span>{{ row.serviceName }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="手机号" prop="phone" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.phone }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="快速码" prop="quickCode" align="center" width="80">
-          <template slot-scope="{row}">
-            <span>{{ row.quickCode }}</span>
           </template>
         </el-table-column>
         <el-table-column label="人脸图片" prop="facePicPath" align="center" width="180">
@@ -145,7 +139,8 @@
       </el-table>
   
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-        
+
+
         <el-dialog :title="textMap[openDoorLogStatus]" :visible.sync="openDoorLogFormVisible">
           <el-table
           :key="tableKey"
@@ -158,32 +153,32 @@
           @sort-change="sortChange"
         >
         
-          <el-table-column label="小区号" prop="neighNo" align="center" width="120">
+        <el-table-column label="小区号" prop="neighNo" align="center" width="120">
+          <template slot-scope="{row}">
+            <span>{{ row.neighNo }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="卡号" prop="cardNo" align="center" width="140">
             <template slot-scope="{row}">
-              <span>{{ row.neighNo }}</span>
+              <span>{{ row.cardNo }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="卡号" prop="cardNo" align="center" width="140">
-              <template slot-scope="{row}">
-                <span>{{ row.cardNo }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="设备号" prop="deviceNo" align="center" width="100">
-              <template slot-scope="{row}">
-                <span>{{ row.deviceNo }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="出入" prop="isUnlock" align="center" width="60">
-              <template slot-scope="{row}">
-                <span v-if="row.isUnlock == 2" >进门</span>
-                <span v-if="row.isUnlock == 4" >出门</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="150">
-              <template slot-scope="{row}">
-                <span>{{ row.openDoorTime }}</span>
-              </template>
-            </el-table-column>
+          <el-table-column label="设备号" prop="deviceNo" align="center" width="100">
+            <template slot-scope="{row}">
+              <span>{{ row.deviceNo }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="出入" prop="isUnlock" align="center" width="60">
+            <template slot-scope="{row}">
+              <span v-if="row.isUnlock == 2" >进门</span>
+              <span v-if="row.isUnlock == 4" >出门</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="刷卡时间" prop="openDoorTime" align="center" width="150">
+            <template slot-scope="{row}">
+              <span>{{ row.openDoorTime }}</span>
+            </template>
+          </el-table-column>
             <el-table-column label="创建时间" align="center" width="150px">
               <template slot-scope="{row}">
                 <span>{{ row.createTime }}</span>
@@ -203,7 +198,7 @@
   </template>
   
   <script>
-  import { quickCodeList} from '@/api/visit/quick-code'
+  import { qrCodeServiceList} from '@/api/visit/qr-code-service'
   import { openDoorLog} from '@/api/visit/open-door-log'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -285,7 +280,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        quickCodeList(this.listQuery).then(response => {
+        qrCodeServiceList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   
@@ -296,7 +291,14 @@
         })
       },
     
-      openDoorLog(row) {
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      // for(var i = 0; i<this.multipleSelection.length; i++){
+      //   alert(this.multipleSelection[i].id)
+      // }    
+    },
+
+    openDoorLog(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.temp.timestamp = new Date(this.temp.timestamp)
         this.openDoorLogFormVisible = true
@@ -306,15 +308,7 @@
             this.listOpenDoorLogLoading = false
           }, 1.5 * 1000)
         })
-      },
-
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-      // for(var i = 0; i<this.multipleSelection.length; i++){
-      //   alert(this.multipleSelection[i].id)
-      // }    
     },
-
 
     handleDownload() {
       this.downloadLoading = true

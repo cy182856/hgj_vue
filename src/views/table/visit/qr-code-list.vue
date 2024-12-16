@@ -62,7 +62,7 @@
             <span>{{ row.proName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡号" prop="cardNo" align="center" width="130">
+        <el-table-column label="卡号" prop="cardNo" align="center" width="140">
           <template slot-scope="{row}">
             <span>{{ row.cardNo }}</span>
           </template>
@@ -102,11 +102,11 @@
             <span>{{ row.resCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="手机号" prop="phone" align="center" width="100">
+        <!-- <el-table-column label="手机号" prop="phone" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.phone }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="创建时间" width="160px" align="center">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>

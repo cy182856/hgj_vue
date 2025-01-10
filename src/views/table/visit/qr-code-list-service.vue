@@ -6,13 +6,15 @@
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
         <el-select v-model="listQuery.type" placeholder="来源" clearable style="width: 140px" class="filter-item">
-          <el-option label="智慧管家" :value="1" />
-          <el-option label="客服" :value="2" />
+          <el-option label="普通二维码" :value="3" />
+          <el-option label="通用二维码" :value="5" />
+          <el-option label="临时二维码" :value="6" />
         </el-select>
         <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cardNo" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.phone" placeholder="创建人手机号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.personPhone" placeholder="使用人手机号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
 
         <el-date-picker
           value-format="yyyy-MM-dd"
@@ -62,7 +64,7 @@
             <span>{{ row.proName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="卡号" prop="cardNo" align="center" width="130">
+        <el-table-column label="卡号" prop="cardNo" align="center" width="140">
           <template slot-scope="{row}">
             <span>{{ row.cardNo }}</span>
           </template>
@@ -107,9 +109,14 @@
             <span>{{ row.serviceName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="手机号" prop="phone" align="center" width="100">
+        <el-table-column label="创建人手机号" prop="phone" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.phone }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="使用人手机号" prop="personPhone" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.personPhone }}</span>
           </template>
         </el-table-column>
         <el-table-column label="人脸图片" prop="facePicPath" align="center" width="180">

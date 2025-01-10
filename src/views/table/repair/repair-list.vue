@@ -139,9 +139,9 @@
             <span>{{ row.repairMsg }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="手机号" prop="mobile" align="center" width="100">
+        <el-table-column label="手机号" prop="cstMobile" align="center" width="100">
           <template slot-scope="{row}">
-            <span>{{ row.mobile }}</span>
+            <span>{{ row.cstMobile }}</span>
           </template>
         </el-table-column>
         <el-table-column label="人工费" prop="labourCost" align="center" width="60">

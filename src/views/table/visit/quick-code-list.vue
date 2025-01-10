@@ -108,6 +108,11 @@
             <span>{{ row.resCode }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="创建人" prop="serviceName" align="center" width="90">
+          <template slot-scope="{row}">
+            <span>{{ row.serviceName }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="手机号" prop="phone" align="center" width="100">
           <template slot-scope="{row}">
             <span>{{ row.phone }}</span>

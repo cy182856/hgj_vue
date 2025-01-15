@@ -17,7 +17,7 @@
           value-format="yyyy-MM-dd"
           style="width: 160px"
           class="filter-item"
-          v-model="listQuery.startTime"
+          v-model="listQuery.startDate"
           type="date"
           placeholder="开始日期"
           >
@@ -27,7 +27,7 @@
           value-format="yyyy-MM-dd"
           style="width: 160px"
           class="filter-item"
-          v-model="listQuery.endTime"
+          v-model="listQuery.endDate"
           type="date"
           placeholder="结束日期"
         >
@@ -58,24 +58,14 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="停车场订单号" prop="parkOrderNo" align="center" width="180">
+        <el-table-column label="续费月数" prop="monthNum" align="center" width="80px">
           <template slot-scope="{row}">
-            <span>{{ row.parkOrderNo }}</span>
+            <span>{{ row.monthNum }}</span>
           </template>
         </el-table-column>
         <el-table-column label="缴费金额" prop="payAmount" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.payAmount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="进场时间" prop="inTime" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.inTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="出场时间" prop="outTime" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.outTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="支付状态" prop="orderStatus" align="center" width="80">
@@ -86,9 +76,34 @@
             <span v-if="row.orderStatus == 3">支付失败</span>
           </template>
         </el-table-column>
-        <el-table-column label="支付回调描述" prop="tradeStateDesc" align="center" width="130">
+        <el-table-column label="支付回调" prop="tradeStateDesc" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.tradeStateDesc }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="充值结果" prop="callBackMsg" align="center" width="110">
+          <template slot-scope="{row}">
+            <span>{{ row.callBackMsg }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="有效开始时间" prop="beginTime" align="center" width="140">
+          <template slot-scope="{row}">
+            <span>{{ row.beginTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="有效结束时间" prop="endTime" align="center" width="140">
+          <template slot-scope="{row}">
+            <span>{{ row.endTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="续费后有效结束时间" prop="renewEndTime" align="center" width="140">
+          <template slot-scope="{row}">
+            <span>{{ row.renewEndTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="车辆类型" prop="carTypeName" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.carTypeName }}</span>
           </template>
         </el-table-column>
         <el-table-column label="项目名称" prop="proName" align="center" width="130">
@@ -106,12 +121,12 @@
             <span>{{ row.cstName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" align="center" width="150">
+        <el-table-column label="创建时间" align="center" width="140">
           <template slot-scope="{row}">
             <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" align="center" width="150">
+        <el-table-column label="更新时间" align="center" width="140">
           <template slot-scope="{row}">
             <span>{{ row.updateTime }}</span>
           </template>
@@ -125,7 +140,7 @@
   </template>
   
   <script>
-  import { carPayList } from '@/api/carpay/carpay-list'
+  import { carRenewList } from '@/api/carrenew/carrenew-list'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { projectSelect } from '@/api/config/config'
@@ -203,7 +218,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        carPayList(this.listQuery).then(response => {
+        carRenewList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   

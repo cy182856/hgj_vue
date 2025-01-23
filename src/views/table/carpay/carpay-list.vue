@@ -8,9 +8,14 @@
             <el-option label="支付成功" :value="2" />
             <el-option label="支付失败" :value="3" />
         </el-select>
+        <el-select v-model="listQuery.isDeduction" placeholder="是否抵扣" clearable style="width: 140px;" class="filter-item">
+            <el-option label="是" :value="1" />
+            <el-option label="否" :value="0" />
+        </el-select>
         <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
+        <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
      
         <el-date-picker
@@ -58,11 +63,6 @@
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="停车场订单号" prop="parkOrderNo" align="center" width="180">
-          <template slot-scope="{row}">
-            <span>{{ row.parkOrderNo }}</span>
-          </template>
-        </el-table-column>
         <el-table-column label="缴费金额" prop="payAmount" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.payAmount }}</span>
@@ -91,9 +91,35 @@
             <span>{{ row.tradeStateDesc }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="项目名称" prop="proName" align="center" width="130">
+        <el-table-column label="停车场订单号" prop="parkOrderNo" align="center" width="180">
+          <template slot-scope="{row}">
+            <span>{{ row.parkOrderNo }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="停车场订单状态" prop="createMsg" align="center" width="130">
+          <template slot-scope="{row}">
+            <span>{{ row.createMsg }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="停车场订单支付回调" prop="payCallBackMsg" align="center" width="130">
+          <template slot-scope="{row}">
+            <span>{{ row.payCallBackMsg }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="项目名称" prop="proName" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="卡号" prop="cardCode" align="center" width="170">
+          <template slot-scope="{row}">
+            <span>{{ row.cardCode }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否抵扣" prop="isDeduction" align="center" width="80">
+          <template slot-scope="{row}">
+            <span v-if="row.isDeduction == 1">是</span>
+            <span v-if="row.isDeduction == 0">否</span>         
           </template>
         </el-table-column>
         <el-table-column label="客户编号" prop="cstCode" align="center" width="120">

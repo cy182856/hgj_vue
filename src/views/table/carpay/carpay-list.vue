@@ -58,14 +58,29 @@
             <span>{{ row.carCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="订单号" prop="id" align="center" width="160px">
+        <el-table-column label="订单号" prop="id" align="center" width="160">
           <template slot-scope="{row}">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="缴费金额" prop="payAmount" align="center" width="80">
+        <el-table-column label="应付金额" prop="payAmount" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.payAmount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="实付金额" prop="actAmount" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.actAmount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="支付时间" prop="successTime" align="center" width="150">
+          <template slot-scope="{row}">
+            <span>{{ row.successTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="抵扣小时" prop="deductionNum" align="center" width="80">
+          <template slot-scope="{row}">
+            <span>{{ row.deductionNum }}</span>
           </template>
         </el-table-column>
         <el-table-column label="进场时间" prop="inTime" align="center" width="150">
@@ -73,11 +88,11 @@
             <span>{{ row.inTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="出场时间" prop="outTime" align="center" width="150">
+        <!-- <el-table-column label="出场时间" prop="outTime" align="center" width="150">
           <template slot-scope="{row}">
             <span>{{ row.outTime }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="支付状态" prop="orderStatus" align="center" width="80">
           <template slot-scope="{row}">
             <span v-if="row.orderStatus == 0">待支付</span>

@@ -89,11 +89,11 @@
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="企微二维码" prop="qrCode" align="center" width="180">
+      <!-- <el-table-column label="企微二维码图片" prop="qrCode" align="center" width="180">
         <template v-if="row.qrCode != null" slot-scope="{ row }">
           <img :src="row.qrCode" alt="Base64 Image" height="250" width="200" />
         </template>     
-      </el-table-column>       -->
+      </el-table-column> -->
       <el-table-column label="企微二维码" prop="qrCode" align="center" width="100">
         <template slot-scope="{row}">
           <span v-if="row.qrCode != null">已上传</span>

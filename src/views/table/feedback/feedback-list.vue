@@ -40,11 +40,11 @@
             <span>{{ row.feedbackDesc }}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column label="微信号" prop="wxOpenId" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.wxOpenId }}</span>
+        <el-table-column label="图片" prop="fileList" align="center" width="520"> 
+          <template v-if="row.fileList != null" slot-scope="{ row }">
+            <img v-for="(image, index) in row.fileList" :key="index" :src="image" alt="Base64 Image" height="150" width="150"/>  
           </template>
-        </el-table-column> -->
+        </el-table-column>     
         <el-table-column label="客户编号" prop="cstCode" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.cstCode }}</span>

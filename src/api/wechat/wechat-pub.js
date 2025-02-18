@@ -63,3 +63,26 @@ export function wechatPubAddMenu(data) {
   })
 }
 
+export function wechatPubMsgTempList(query) {
+  return request({
+    url: url + '/wechatPub/msgTempList',
+    method: 'get',
+    params: query
+  })
+}
+
+export function closeMsg(id) {
+  return request({
+    url: url + '/wechatPub/closeMsg',
+    method: 'get',
+    params: { id }
+  })
+}
+
+export function openMsg(id) {
+  return request({
+    url: url + '/wechatPub/openMsg',
+    method: 'get',
+    params: { id }
+  })
+}

@@ -6,7 +6,75 @@
         <h3 class="title">智慧管家</h3>
       </div>
 
-      <el-form-item prop="username">
+      <!-- 用户名 -->
+      <el-row>
+        <el-col :span="24">
+          <div>
+            <el-form-item prop="username">
+              <span class="svg-container">
+                <svg-icon icon-class="user" />
+              </span>
+              <el-input
+                ref="username"
+                v-model="loginForm.username"
+                placeholder="请输入手机号"
+                name="username"
+                type="text"
+                tabindex="1"
+                autocomplete="off"
+              />
+            </el-form-item>
+          </div>
+        </el-col>    
+      </el-row>
+
+      <!-- 密码 -->
+      <el-row>
+        <el-col :span="15">
+          <div>
+            <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+              <el-form-item prop="password">
+                <span class="svg-container">
+                  <svg-icon icon-class="password" />
+                </span>
+                <el-input
+                  :key="passwordType"
+                  ref="password"
+                  v-model="loginForm.password"
+                  :type="passwordType"
+                  placeholder="请输入钉钉验证码"
+                  name="password"
+                  tabindex="2"
+                  autocomplete="off"
+                  @keyup.native="checkCapslock"
+                  @blur="capsTooltip = false"
+                  @keyup.enter.native="handleLogin"
+                />
+                <span class="show-pwd" @click="showPwd">
+                  <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                </span>
+              </el-form-item>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <!-- 发送验证码 -->
+        <el-col :span="9">
+          <div>
+            <el-button class="send-code-button" @click="userSendCode">获取验证码</el-button>
+          </div>
+        </el-col>
+      </el-row>
+
+      <!-- 登录按钮 -->
+       <el-row style="margin-top: 15px;">
+        <el-col :span="24">
+          <div>
+            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+          </div>
+        </el-col>
+       </el-row>
+
+      <!-- <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
@@ -19,9 +87,11 @@
           tabindex="1"
           autocomplete="on"
         />
-      </el-form-item>
+      </el-form-item> -->
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+    
+      
+      <!-- <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
             <svg-icon icon-class="password" />
@@ -43,9 +113,9 @@
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
-      </el-tooltip>
+      </el-tooltip> -->
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <!-- <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button> -->
 
       <!-- <div style="position:relative">
         <div class="tips">
@@ -62,7 +132,7 @@
         </el-button>
       </div> -->
     </el-form>
-
+    
     <el-dialog title="Or connect with" :visible.sync="showDialog">
       Can not be simulated on local, so please combine you own business simulation! ! !
       <br>
@@ -76,6 +146,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import { userSendCode } from '@/api/index/index'
 
 export default {
   name: 'Login',
@@ -98,8 +169,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -172,6 +243,26 @@ export default {
         }
       })
     },
+
+    userSendCode(){
+      var userName = this.loginForm.username;
+      userSendCode(userName).then((res) => {
+          if (res.code == 20000) {
+            this.$notify({
+              title: 'Success',
+              message: '发送成功,请前往钉钉查看验证码',
+              type: 'success',
+              duration: 10000
+          })} else {
+            this.$notify({
+              message: res.data.message,
+              type: 'error',
+              duration: 3000          
+            })
+          }
+        });
+    },
+
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -315,6 +406,16 @@ $light_gray:#eee;
     position: absolute;
     right: 0;
     bottom: 6px;
+  }
+
+  .send-code-button {
+    height: 44px; 
+    width: 95%; 
+    margin-top: 2px;
+    margin-left: 5%; 
+    background-color: #2d3a4b; 
+    border-color:#4e4e4e; 
+    color: #fff;
   }
 
   @media only screen and (max-width: 470px) {

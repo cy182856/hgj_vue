@@ -8,6 +8,15 @@
             <el-option label="支付成功" :value="2" />
             <el-option label="支付失败" :value="3" />
         </el-select>
+        <el-select v-model="listQuery.invoiceStatus" placeholder="开票状态" clearable style="width: 140px;" class="filter-item">
+            <el-option label="未开票" :value="0" />
+            <el-option label="开票中" :value="1" />
+            <el-option label="已开票" :value="2" />
+        </el-select>
+        <el-select v-model="listQuery.resCode" placeholder="开票回调状态" clearable style="width: 140px;" class="filter-item">
+            <el-option label="成功" :value= "1" />
+            <el-option label="失败" :value= "2" />
+        </el-select>
         <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
         </el-select>
@@ -81,9 +90,27 @@
             <span>{{ row.tradeStateDesc }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="充值结果" prop="callBackMsg" align="center" width="110">
+        <el-table-column label="充值结果" prop="callBackMsg" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.callBackMsg }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开票状态" prop="invoiceStatus" align="center" width="80">
+          <template slot-scope="{row}">
+            <span v-if="row.invoiceStatus == 1">开票中</span>
+            <span v-if="row.invoiceStatus == 2">已开票</span>
+            <span v-if="row.invoiceStatus == null">未开票</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开票回调状态" prop="resCode" align="center" width="100">
+          <template slot-scope="{row}">
+            <span v-if="row.resCode == '01'">成功</span>
+            <span v-if="row.resCode == '02'">失败</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开票回调信息" prop="resMsg" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.resMsg }}</span>         
           </template>
         </el-table-column>
         <el-table-column label="有效开始时间" prop="beginTime" align="center" width="140">
@@ -101,11 +128,11 @@
             <span>{{ row.renewEndTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="车辆类型" prop="ruleType" align="center" width="80">
+        <!-- <el-table-column label="车辆类型" prop="ruleType" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.ruleType }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="项目名称" prop="proName" align="center" width="130">
           <template slot-scope="{row}">
             <span>{{ row.proName }}</span>

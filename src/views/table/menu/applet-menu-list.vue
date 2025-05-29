@@ -43,11 +43,11 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">          
-            <el-button type="primary" size="mini" @click="menuTreeCreate(row)">
+            <!-- <el-button type="primary" size="mini" @click="menuTreeCreate(row)">
               选择客户
-            </el-button>  
+            </el-button>   -->
             <el-button type="primary" size="mini" @click="selectIdentity(row)">
               选择身份
             </el-button>

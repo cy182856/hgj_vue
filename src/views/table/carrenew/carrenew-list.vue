@@ -8,9 +8,9 @@
             <el-option label="支付成功" :value="2" />
             <el-option label="支付失败" :value="3" />
         </el-select>
-        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
+        <!-- <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
-        </el-select>
+        </el-select> -->
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
      
         <el-date-picker

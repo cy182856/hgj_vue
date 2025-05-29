@@ -192,13 +192,16 @@
             <span>{{ row.updateTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
           <template slot-scope="{row,$index}">
             <el-button type="primary" size="mini" @click="cardCstBatchSelect(row)">
               详细
             </el-button>
             <el-button v-if="row.isExp == 1" type="primary" size="mini" @click="rechargeCreateModel(row,$index)">
               充值
+            </el-button>
+            <el-button v-if="row.isExp == 1" type="primary" size="mini" @click="deductCreateModel(row,$index)">
+              扣减
             </el-button>
             <!-- <el-button type="primary" size="mini" @click="renewalCreateModel(row,$index)">
               续期
@@ -400,30 +403,30 @@
             <el-input v-model="temp.id" placeholder="id" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>   
           
-          <el-form-item label="次数/小时" prop="rechargeNum">
-            <el-input v-model="temp.rechargeNum" placeholder="次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          <el-form-item label="充值次数/小时" prop="rechargeNum">
+            <el-input v-model="temp.rechargeNum" placeholder="充值次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>     
 
-          <el-form-item v-if="temp.cardType == 1" label="有效年份" prop="expDate">
+          <el-form-item v-if="temp.cardType == 1" label="充值年份" prop="expDate">
             <el-date-picker
               value-format="yyyy"
               style="width: 300px"
               class="filter-item"
               v-model="temp.expDate"
               type="year"
-              placeholder="有效年份"
+              placeholder="充值年份"
               >
             </el-date-picker>
           </el-form-item>
 
-          <el-form-item v-if="temp.cardType == 2" label="有效月份" prop="expDate">
+          <el-form-item v-if="temp.cardType == 2" label="充值月份" prop="expDate">
             <el-date-picker
               value-format="yyyy-MM"
               style="width: 300px"
               class="filter-item"
               v-model="temp.expDate"
               type="month"
-              placeholder="有效月份"
+              placeholder="充值月份"
               >
             </el-date-picker>
           </el-form-item>
@@ -434,6 +437,52 @@
             取消
           </el-button>
           <el-button type="primary" @click="rechargeDialogStatus==='create'?cardRecharge():cardRecharge()">
+            提交
+          </el-button>
+        </div>    
+      </el-dialog>
+
+      <!-- 扣减 -->
+      <el-dialog :title="textMap[deductDialogStatus]" :visible.sync="deductDialogShow">
+        <el-form ref="deductDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
+          <el-form-item label="id" prop="id" class="is_show">
+            <el-input v-model="temp.id" placeholder="id" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>   
+          
+          <el-form-item label="扣减次数/小时" prop="rechargeNum">
+            <el-input v-model="temp.rechargeNum" placeholder="扣减次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
+          </el-form-item>     
+
+          <el-form-item v-if="temp.cardType == 1" label="扣减年份" prop="expDate">
+            <el-date-picker
+              value-format="yyyy"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.expDate"
+              type="year"
+              placeholder="扣减年份"
+              >
+            </el-date-picker>
+          </el-form-item>
+
+          <el-form-item v-if="temp.cardType == 2" label="扣减月份" prop="expDate">
+            <el-date-picker
+              value-format="yyyy-MM"
+              style="width: 300px"
+              class="filter-item"
+              v-model="temp.expDate"
+              type="month"
+              placeholder="扣减月份"
+              >
+            </el-date-picker>
+          </el-form-item>
+
+        </el-form>  
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="deductDialogShow = false">
+            取消
+          </el-button>
+          <el-button type="primary" @click="deductDialogStatus==='create'?cardDeduct():cardDeduct()">
             提交
           </el-button>
         </div>    
@@ -563,9 +612,23 @@
         </div>
       </el-dialog>
 
-      <!-- 批量操作 -->
+      <!-- 卡批量操作 -->
     <el-dialog :title="textMap[cardBulkOperationDialogStatus]" :visible.sync="cardBulkOperationDialogShow">
         <el-form ref="cardBulkOperationDataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 600px;height: 100%; margin-left:60px;">
+
+          <!-- <el-row>
+            <el-col span="17">
+              <div>
+                <el-form-item label="选择卡" prop="cardId">
+                  <el-select v-model="temp.cardId" placeholder="选择卡" clearable style="width: 300px" class="filter-item">
+                    <el-option v-for="item in cardOptions" :key="item.id" :label="item.name" :value="item.id" />
+                  </el-select>
+                </el-form-item>  
+              </div>
+          </el-col>
+            <el-col span="7" style="height: 200px;">选择卡</el-col>
+          </el-row> -->
+
           <el-form-item label="选择卡" prop="cardId">
             <el-select v-model="temp.cardId" placeholder="选择卡" clearable style="width: 300px" class="filter-item">
               <el-option v-for="item in cardOptions" :key="item.id" :label="item.name" :value="item.id" />
@@ -578,7 +641,14 @@
               <el-radio :label=2>禁用</el-radio>
               <el-radio :label=3>恢复</el-radio>
               <el-radio :label=4>充值</el-radio>
+              <el-radio :label=5>扣减</el-radio>
             </el-radio-group>
+          </el-form-item>
+
+          <el-form-item style="margin-top: 20px;" label="已选客户">
+            <div style="height: 200px;overflow-y: auto;">
+             {{ cardCstResNames }}
+            </div>
           </el-form-item>
 
           <!-- <el-form-item label="卡类型" prop="cardType">
@@ -588,11 +658,11 @@
           </el-select>
           </el-form-item> -->
 
-          <el-form-item v-if="temp.cardOption == 4" label="次数/小时" prop="totalNum">
+          <el-form-item v-if="temp.cardOption == 4 || temp.cardOption == 5" label="次数/小时" prop="totalNum">
             <el-input v-model="temp.totalNum" placeholder="次数/小时" clearable style="width: 300px" class="filter-item"></el-input> 
           </el-form-item>     
 
-          <el-form-item v-if="temp.cardId == 1 && temp.cardOption == 4" label="有效年份" prop="expDate">
+          <el-form-item v-if="temp.cardId == 1 && (temp.cardOption == 4 || temp.cardOption == 5)" label="有效年份" prop="expDate">
             <el-date-picker
               value-format="yyyy"
               style="width: 300px"
@@ -604,7 +674,7 @@
             </el-date-picker>
           </el-form-item>
 
-          <el-form-item v-if="temp.cardId == 2 && temp.cardOption == 4" label="有效月份" prop="expDate">
+          <el-form-item v-if="temp.cardId == 2 && (temp.cardOption == 4 || temp.cardOption == 5)" label="有效月份" prop="expDate">
             <el-date-picker
               value-format="yyyy-MM"
               style="width: 300px"
@@ -703,7 +773,7 @@
   
   <script>
   import { selectCstTreeByCardId } from '@/api/tag/tag'
-  import { sendCardByTag, sendCardByCst, rechargeByTag, cardRecharge, renewalByTag, cardRenewal, cardCstList, cardDisable, cardSecure, cardBulkOperation} from '@/api/card/card-cst'
+  import { sendCardByTag, sendCardByCst, rechargeByTag, cardRecharge, cardDeduct, renewalByTag, cardRenewal, cardCstList, cardDisable, cardSecure, cardBulkOperation} from '@/api/card/card-cst'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { tagSelect, selectCstList} from '@/api/tag/tag'
@@ -735,6 +805,8 @@
         cardType:'',
         // 选中数组
         cardCstCodes: [],
+        // 已选择客户，房号
+        cardCstResNames: [],
         // 非单个禁用
         single: true,
         // 非多个禁用
@@ -784,7 +856,9 @@
         renewalByTagDialogStatus:'',
         renewalByTagDialogShow:false,
         rechargeDialogStatus:'',
-        rechargeDialogShow:false,
+        rechargeDialogShow:false,    
+        deductDialogStatus:'',
+        deductDialogShow:false,
         renewalDialogStatus:'',
         renewalDialogShow:false,
         textMap: {
@@ -943,6 +1017,16 @@
         this.rechargeDialogShow = true
         this.$nextTick(() => {
           this.$refs['rechargeDataForm'].clearValidate()
+        })
+      },
+
+      deductCreateModel(row) {
+        this.temp = Object.assign({}, row) // copy obj
+        this.temp.timestamp = new Date(this.temp.timestamp)
+        this.deductDialogStatus = 'create'
+        this.deductDialogShow = true
+        this.$nextTick(() => {
+          this.$refs['deductDataForm'].clearValidate()
         })
       },
 
@@ -1220,6 +1304,62 @@
         })
       },
 
+      cardDeduct() {
+         // 扣减，次数不能为空      
+         if( this.temp.rechargeNum == null || this.temp.rechargeNum == "" || this.temp.rechargeNum == "undefined"){
+              this.$notify({
+                message: '次数/小时不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        // 正则表达式，匹配正整数
+        var pattern = /^[1-9]\d*$/;
+        if (!pattern.test(this.temp.rechargeNum) && this.temp.rechargeNum != null) {
+          this.$notify({
+                message: '次数/小时必须是正整数！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        if(this.temp.cardType == 1 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+              this.$notify({
+                message: '有效年份不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        if(this.temp.cardType == 2 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+              this.$notify({
+                message: '有效月份不能为空！',
+                type: 'error',
+                duration: 2000          
+              })
+              return
+        }
+        this.$refs['deductDataForm'].validate((valid) => {      
+         if (valid) {
+            const tempData = Object.assign({}, this.temp)
+            tempData.timestamp = +new Date(tempData.timestamp) 
+            cardDeduct(tempData).then(() => {
+              const index = this.list.findIndex(v => v.id === this.temp.id)
+              this.list.splice(index, 1, this.temp)
+              this.deductDialogShow = false
+              this.getList();
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
+        })
+      },
+
       // 批量续期
       renewalByTag() {
         if(this.temp.cardId == null || this.temp.cardId == "" || this.temp.cardId == "undefined"){
@@ -1421,14 +1561,15 @@
           });
       },
 
-      // 多选框选中数据
-      handleSelectionChange(selection) {
+    // 多选框选中数据
+    handleSelectionChange(selection) {
         console.log("多选框选中数据");
         // 需要根据数据情况调整id名称
         this.cardCstCodes = selection.map(item => item.cstCode);
+        this.cardCstResNames = selection.map(item => item.cstName + "," + item.resName);
         this.single = selection.length != 1;
         this.multiple = !selection.length;
-      },
+    },
 
       // 批量操作
     sendCardByCstCreateModel() {
@@ -1468,8 +1609,8 @@
               })
               return
         }
-        //操作选择充值，次数不能为空      
-        if(this.temp.cardOption == 4 && (this.temp.totalNum == null || this.temp.totalNum == "" || this.temp.totalNum == "undefined")){
+        //操作选择充值、扣减，次数不能为空      
+        if((this.temp.cardOption == 4 || this.temp.cardOption == 5) && (this.temp.totalNum == null || this.temp.totalNum == "" || this.temp.totalNum == "undefined")){
               this.$notify({
                 message: '次数/小时不能为空！',
                 type: 'error',
@@ -1479,7 +1620,7 @@
         }
         // 正则表达式，匹配正整数
         var pattern = /^[1-9]\d*$/;
-        if (!pattern.test(this.temp.totalNum) && this.temp.cardOption == 4 && this.temp.totalNum != null) {
+        if (!pattern.test(this.temp.totalNum) && (this.temp.cardOption == 4 || this.temp.cardOption == 5) && this.temp.totalNum != null) {
           this.$notify({
                 message: '次数/小时必须是正整数！',
                 type: 'error',
@@ -1497,7 +1638,7 @@
         //       return
         // }
 
-        if(this.temp.cardId == 1 && this.temp.cardOption == 4 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+        if(this.temp.cardId == 1 && (this.temp.cardOption == 4 || this.temp.cardOption == 5) && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
               this.$notify({
                 message: '有效年份不能为空！',
                 type: 'error',
@@ -1506,7 +1647,7 @@
               return
         }
 
-        if(this.temp.cardId == 2 && this.temp.cardOption == 4 && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
+        if(this.temp.cardId == 2 && (this.temp.cardOption == 4 || this.temp.cardOption == 5) && (this.temp.expDate == null || this.temp.expDate == "" || this.temp.expDate == "undefined")){
               this.$notify({
                 message: '有效月份不能为空！',
                 type: 'error',

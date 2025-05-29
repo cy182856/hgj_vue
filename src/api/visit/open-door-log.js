@@ -8,3 +8,11 @@ export function openDoorLog(cardNo) {
     params: { cardNo }
   })
 }
+
+export function openDoorList(query) {
+  return request({
+    url: url + '/opendoor/list',
+    method: 'get',
+    params: query
+  })
+}

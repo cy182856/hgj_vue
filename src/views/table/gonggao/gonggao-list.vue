@@ -48,9 +48,14 @@
           <span>{{ row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标题" prop="title" align="center" width="150">
+      <el-table-column label="标题" prop="title" align="center" width="180">
         <template slot-scope="{row}">
           <span>{{ row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="公告URL" prop="url" align="center" width="180">
+        <template slot-scope="{row}">
+          <span>{{ row.url }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="作者" prop="author" align="center" width="120">
@@ -99,21 +104,24 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="450" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="400" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            编辑
+          </el-button>
           <el-button v-if="row.isShow == 1" type="primary" size="mini" @click="gonggaoIsShow(row)">
             发布
           </el-button>
           <el-button v-if="row.isShow == 0" type="danger" size="mini" @click="gonggaoNotIsShow(row)">
             撤回
           </el-button>
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
             分类
-          </el-button>
-          <el-button v-if="row.source == 2" type="primary" size="mini" @click="contentUpdate(row)">
+          </el-button> -->
+          <!-- <el-button v-if="row.source == 2" type="primary" size="mini" @click="contentUpdate(row)">
             内容
-          </el-button>
-          <el-button v-if="row.source == 2" type="primary" size="mini" @click="gonggaoSendMsg(row)">
+          </el-button> -->
+          <el-button v-if="row.source == 3" type="primary" size="mini" @click="gonggaoSendMsg(row)">
             发送消息
           </el-button>
           <el-button type="primary" size="mini" @click="gonggaoView(row)">
@@ -133,10 +141,21 @@
         <el-form-item class="is_show" label="id" prop="id">
           <el-input v-model="temp.id" />
         </el-form-item>
+        <el-form-item label="项目" prop="proNum" style="margin-top: 20px;">
+          <el-select v-model="temp.proNum" placeholder="项目" clearable style="width: 300px" class="filter-item">
+            <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="分类" prop="type">
-          <el-select v-model="temp.type" placeholder="分类" clearable style="width: 328px" class="filter-item">
+          <el-select v-model="temp.type" placeholder="分类" clearable style="width: 300px" class="filter-item">
             <el-option v-for="item in gonggaoTypes" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="公告标题" prop="title">
+          <el-input v-model="temp.title" placeholder="公告标题" clearable style="width: 300px" class="filter-item"></el-input>
+        </el-form-item>
+        <el-form-item label="公告URL" prop="url">
+          <el-input v-model="temp.url" placeholder="公告URL" clearable style="width: 300px" class="filter-item"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -216,6 +235,8 @@ export default {
       pvData: [],
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        proNum: [{ required: true, message: 'proNum is required', trigger: 'change' }],
+        url: [{ required: true, message: 'url is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
@@ -294,14 +315,6 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          if(this.temp.name == null || this.temp.name == "" || this.temp.name == "undefined"){
-            this.$notify({
-              message: '名称不能为空！',
-              type: 'error',
-              duration: 2000          
-            })
-            return
-          }
           gonggaoSave(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -365,14 +378,23 @@ export default {
           })
     },
 
-    gonggaoAdd(){
-      this.$router.push('/table/gonggao/gonggao-add');
+    // gonggaoAdd(){
+    //   this.$router.push('/table/gonggao/gonggao-add');
+    // },
+
+    gonggaoAdd() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
 
     gonggaoView(row, index){
-        if(row.source == 1){
+        if(row.source == 1 || row.source == 3){
           window.open(row.url, "_blank");
-        }else{         
+        }else {         
           // gonggaoView(row.id).then(response => response.blob()) // 将响应转换为Blob
           // .then(blob => {
           //   // 创建一个指向文件的URL

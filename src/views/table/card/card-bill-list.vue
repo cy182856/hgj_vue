@@ -132,12 +132,12 @@
           <span v-if="row.billType == 2">扣减</span>
         </template>
       </el-table-column>
-      <el-table-column label="充值操作人" prop="userName" align="center" width="100px">
+      <el-table-column label="操作人" prop="userName" align="center" width="100px">
         <template slot-scope="{ row }">
           <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="扣减操作人" prop="intoName" align="center" width="100px">
+      <el-table-column label="使用人" prop="intoName" align="center" width="100px">
         <template slot-scope="{ row }">
           <span>{{ row.intoName }}</span>
         </template>

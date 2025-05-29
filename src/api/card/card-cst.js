@@ -41,6 +41,14 @@ export function cardRecharge(data) {
   })
 }
 
+export function cardDeduct(data) {
+  return request({
+    url: url + '/cardCst/cardDeduct',
+    method: 'post',
+    data
+  })
+}
+
 export function cardRenewal(data) {
   return request({
     url: url + '/cardCst/cardRenewal',

@@ -17,9 +17,9 @@
             <el-option label="成功" :value= "1" />
             <el-option label="失败" :value= "2" />
         </el-select>
-        <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
+        <!-- <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
-        </el-select>
+        </el-select> -->
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
      
         <el-date-picker
@@ -83,6 +83,11 @@
             <span v-if="row.orderStatus == 1">支付中</span>
             <span v-if="row.orderStatus == 2">支付成功</span>
             <span v-if="row.orderStatus == 3">支付失败</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="支付时间" align="center" width="140">
+          <template slot-scope="{row}">
+            <span>{{ row.successTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="支付回调" prop="tradeStateDesc" align="center" width="80">
@@ -255,7 +260,6 @@
             children: 'children',
             label: 'label'
           }
-  
       }
     },
     created() {

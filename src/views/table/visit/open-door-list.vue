@@ -2,10 +2,9 @@
     <div class="app-container">
       <div class="filter-container">
        
-        <el-input v-model="listQuery.userName" placeholder="姓名" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.phone" placeholder="电话" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.idCard" placeholder="身份证号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.belComp" placeholder="公司" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cardNo" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.deviceNo" placeholder="设备号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+
         <el-date-picker
           value-format="yyyy-MM-dd"
           style="width: 160px"
@@ -29,9 +28,6 @@
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 5px;" @click="handleFilter">
           查询
         </el-button>
-        <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-          导出
-        </el-button> -->
       </div>
   
       <el-table
@@ -49,29 +45,30 @@
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
 
-        <el-table-column label="姓名" prop="userName" align="center" width="120">
+        <el-table-column label="小区号" prop="neighNo" align="center" width="120">
           <template slot-scope="{row}">
-            <span>{{ row.userName }}</span>
+            <span>{{ row.neighNo }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="电话" prop="phone" align="center" width="130">
+        <el-table-column label="卡号" prop="cardNo" align="center" width="150">
           <template slot-scope="{row}">
-            <span>{{ row.phone }}</span>
+            <span>{{ row.cardNo }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="身份证号" prop="idCard" align="center" width="150">
+        <el-table-column label="设备号" prop="deviceNo" align="center" width="130">
           <template slot-scope="{row}">
-            <span>{{ row.idCard }}</span>
+            <span>{{ row.deviceNo }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="公司" prop="belComp" align="center" width="180">
+        <el-table-column label="类型" prop="isUnlock" align="center" width="80">
           <template slot-scope="{row}">
-            <span>{{ row.belComp }}</span>
+            <span v-if="row.isUnlock == 2">进门</span>
+            <span v-if="row.isUnlock == 4">出门</span>
           </template>
         </el-table-column>
-        <el-table-column label="人脸图片" prop="facePicPath" align="center" width="200">
-          <template v-if="row.facePicPath != null" slot-scope="{ row }">
-            <img :src="row.facePicPath" alt="Base64 Image" height="150" width="150" />
+        <el-table-column label="刷卡时间" prop="openDoorTime" width="160px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.openDoorTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" width="160px" align="center">
@@ -85,14 +82,6 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">    
-            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-
       </el-table>
   
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -101,7 +90,7 @@
   </template>
   
   <script>
-  import { personInfoList, personInfoListDelete} from '@/api/visit/external-person-info'
+  import { openDoorList} from '@/api/visit/open-door-log'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -178,7 +167,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        personInfoList(this.listQuery).then(response => {
+        openDoorList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   
@@ -188,75 +177,45 @@
           }, 1.5 * 1000)
         })
       },
-
-      handleDelete(row, index) {
-      this.$confirm('确认删除?', '提示', {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        personInfoListDelete(row.id,).then((res) => {
-          if (res.code == 20000) {
-            this.$notify({
-              title: 'Success',
-              message: 'Delete Successfully',
-              type: 'success',
-              duration: 2000
-          })
-            this.list.splice(index, 1)
-            } else {
-              this.$notify({
-                message: res.data.message,
-                type: 'error',
-                duration: 2000          
-              })
-            }
-          });
-        })
-        //取消删除
-        .catch(() => {
-          //alert('取消')
-        });
-    },
     
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-      // for(var i = 0; i<this.multipleSelection.length; i++){
-      //   alert(this.multipleSelection[i].id)
-      // }    
-    },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+        // for(var i = 0; i<this.multipleSelection.length; i++){
+        //   alert(this.multipleSelection[i].id)
+        // }    
+      },
 
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
-    },
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
   
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-       
-    resetTemp() {
-        this.temp = {
-          id: undefined,
-          importance: 1,
-          remark: '',
-          timestamp: new Date(),
-          title: '',
-          status: 'published',
-          type: ''
+      sortChange(data) {
+        const { prop, order } = data
+        if (prop === 'id') {
+          this.sortByID(order)
         }
-    },
+      },
+      sortByID(order) {
+        if (order === 'ascending') {
+          this.listQuery.sort = '+id'
+        } else {
+          this.listQuery.sort = '-id'
+        }
+        this.handleFilter()
+      },
+       
+      resetTemp() {
+          this.temp = {
+            id: undefined,
+            importance: 1,
+            remark: '',
+            timestamp: new Date(),
+            title: '',
+            status: 'published',
+            type: ''
+          }
+      },
    
   }
 }

@@ -15,3 +15,11 @@ export function identitySelectByProNums(data) {
     data
   })
 }
+
+export function identitySelectByProNum(proNum) {
+  return request({
+    url: url + '/identity/selectByProNum',
+    method: 'get',
+    params: { proNum }
+  })
+}

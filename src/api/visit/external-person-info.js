@@ -8,3 +8,11 @@ export function personInfoList(query) {
     params: query
   })
 }
+
+export function personInfoListDelete(id) {
+  return request({
+    url: url + '/opendoor/personInfo/delete',
+    method: 'get',
+    params: { id }
+  })
+}

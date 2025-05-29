@@ -26,6 +26,13 @@ export function createIntoCstQrCode(data) {
   })
 }
 
+export function createIntoStaffQrCode(data) {
+  return request({
+    url: url + '/cst/createIntoStaffQrCode',
+    method: 'post',
+    data
+  })
+}
 
 export function saveCstMenu(data) {
   return request({

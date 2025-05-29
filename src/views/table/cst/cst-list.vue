@@ -147,7 +147,7 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="createIntoQrcode(row,$index)">
             生成入住二维码
@@ -161,6 +161,9 @@
           <!-- <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button> -->
+          <el-button v-if="row.orgId == '10000'" type="primary" size="mini" @click="createIntoStaffQrCode(row)">
+            员工入住二维码
+        </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -389,13 +392,13 @@
 </template>
 
 <script>
-import { cstList, createQrCode, createIntoCstQrCode, saveCstMenu } from '@/api/cst/cst'
+import { cstList, createQrCode, createIntoCstQrCode, createIntoStaffQrCode, saveCstMenu } from '@/api/cst/cst'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { selectMenuMini } from '@/api/user/user-menu'
 import { project } from '@/api/config/config'
 import { houseSelect} from '@/api/house/house'
-import { identitySelect } from '@/api/identity/identity'
+import { identitySelect, identitySelectByProNum } from '@/api/identity/identity'
 import { cardSelect} from '@/api/card/card'
 import { cardBulkOperation } from '@/api/card/card-cst'
 import { cardTypeSelect} from '@/api/card/card-type'
@@ -552,10 +555,10 @@ export default {
       project().then(response => {
         this.projectOptions = response.data.list
       })
-      // 身份
-      identitySelect().then(response => {
-        this.identityOptions = response.data.list
-      }) 
+      // // 身份
+      // identitySelect().then(response => {
+      //   this.identityOptions = response.data.list
+      // }) 
       // 卡 
       cardSelect().then(response => {
         this.cardOptions = response.data.list
@@ -593,7 +596,11 @@ export default {
       // 获取客户房屋
       houseSelect(row.code).then(response => {
         this.resOptions = response.data.list;
-      })      
+      })
+      // 获取身份
+      identitySelectByProNum(row.orgId).then(response => {
+        this.identityOptions = response.data.list
+      }) 
     },
     // 生成客户入住二维码
     createIntoCstQrCode() {
@@ -603,10 +610,10 @@ export default {
               message: '房屋不能为空！',
               type: 'error',
               duration: 2000
-            })
-            return
-          }
-        }        
+          })
+          return
+        }
+      }        
       this.imgUrl = null;
       this.houseList = null;
       this.qrCreateTime = null;
@@ -626,11 +633,34 @@ export default {
           this.qrCutOffTime = response.data.qrCutOffTime
           this.intoRole = response.data.intoRole
           setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
+            this.listLoading = false
+            }, 1.5 * 1000)
+          })
         }
       })
+    },
+
+    // 生成员工入住二维码
+    createIntoStaffQrCode(row) {
+      this.imgUrl = null;
+      this.houseList = null;
+      this.qrCreateTime = null;
+      this.qrCutOffTime = null;
+      this.intoRole = null;
+      this.dialogFormVisible = true
+      this.temp.cstCode = row.code;
+      this.temp.cstName = row.cstName;
+      this.temp.orgId = row.orgId;
+      createIntoStaffQrCode(this.temp).then(response => {
+        this.imgUrl = response.data.imgUrl
+        this.houseList = response.data.houseList
+        this.qrCreateTime = response.data.qrCreateTime
+        this.qrCutOffTime = response.data.qrCutOffTime
+        this.intoRole = response.data.intoRole
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })       
     },
 
     cleanHouseOption(){

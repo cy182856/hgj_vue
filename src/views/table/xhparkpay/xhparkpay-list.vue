@@ -2,22 +2,10 @@
     <div class="app-container">
       <div class="filter-container">
         <el-input v-model="listQuery.carCode" placeholder="车牌号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.orderStatus" placeholder="支付状态" clearable style="width: 140px;" class="filter-item">
-            <el-option label="待支付" :value="0" />
-            <el-option label="支付中" :value="1" />
-            <el-option label="支付成功" :value="2" />
-            <el-option label="支付失败" :value="3" />
-        </el-select>
-        <el-select v-model="listQuery.isDeduction" placeholder="是否抵扣" clearable style="width: 140px;" class="filter-item">
-            <el-option label="是" :value="1" />
-            <el-option label="否" :value="0" />
-        </el-select>
-        <!-- <el-select v-model="listQuery.proNum" placeholder="项目" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in projectOptions" :key="item.projectNum" :label="item.projectName" :value="item.projectNum" />
-        </el-select> -->
         <el-input v-model="listQuery.cardCode" placeholder="卡号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.cstCode" placeholder="客户编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-input v-model="listQuery.cstName" placeholder="客户名称" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
-     
+        <el-input v-model="listQuery.couponKey" placeholder="优惠券编号" style="width: 140px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-date-picker
           value-format="yyyy-MM-dd"
           style="width: 160px"
@@ -58,67 +46,19 @@
             <span>{{ row.carCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="订单号" prop="id" align="center" width="160">
+        <el-table-column label="优惠券方案编号" prop="couponNo" align="center" width="160">
           <template slot-scope="{row}">
-            <span>{{ row.id }}</span>
+            <span>{{ row.couponNo }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="应付金额" prop="payAmount" align="center" width="80">
+        </el-table-column> 
+        <el-table-column label="优惠券编号" prop="couponKey" align="center" width="160">
           <template slot-scope="{row}">
-            <span>{{ row.payAmount }}</span>
+            <span>{{ row.couponKey }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="实付金额" prop="actAmount" align="center" width="80">
-          <template slot-scope="{row}">
-            <span>{{ row.actAmount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="支付时间" prop="successTime" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.successTime }}</span>
-          </template>
-        </el-table-column>
+        </el-table-column> 
         <el-table-column label="抵扣小时" prop="deductionNum" align="center" width="80">
           <template slot-scope="{row}">
             <span>{{ row.deductionNum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="进场时间" prop="inTime" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.inTime }}</span>
-          </template>
-        </el-table-column>
-        <!-- <el-table-column label="出场时间" prop="outTime" align="center" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.outTime }}</span>
-          </template>
-        </el-table-column> -->
-        <el-table-column label="支付状态" prop="orderStatus" align="center" width="80">
-          <template slot-scope="{row}">
-            <span v-if="row.orderStatus == 0">待支付</span>
-            <span v-if="row.orderStatus == 1">支付中</span>
-            <span v-if="row.orderStatus == 2">支付成功</span>
-            <span v-if="row.orderStatus == 3">支付失败</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="支付回调描述" prop="tradeStateDesc" align="center" width="130">
-          <template slot-scope="{row}">
-            <span>{{ row.tradeStateDesc }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="停车场订单号" prop="parkOrderNo" align="center" width="180">
-          <template slot-scope="{row}">
-            <span>{{ row.parkOrderNo }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="停车场订单状态" prop="createMsg" align="center" width="130">
-          <template slot-scope="{row}">
-            <span>{{ row.createMsg }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="停车场订单支付回调" prop="payCallBackMsg" align="center" width="130">
-          <template slot-scope="{row}">
-            <span>{{ row.payCallBackMsg }}</span>
           </template>
         </el-table-column>
         <el-table-column label="项目名称" prop="proName" align="center" width="120">
@@ -130,13 +70,7 @@
           <template slot-scope="{row}">
             <span>{{ row.cardCode }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="是否抵扣" prop="isDeduction" align="center" width="80">
-          <template slot-scope="{row}">
-            <span v-if="row.isDeduction == 1">是</span>
-            <span v-if="row.isDeduction == 0">否</span>         
-          </template>
-        </el-table-column>
+        </el-table-column>     
         <el-table-column label="客户编号" prop="cstCode" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.cstCode }}</span>
@@ -145,6 +79,11 @@
         <el-table-column label="客户名称" prop="cstName" align="center" width="120">
           <template slot-scope="{row}">
             <span>{{ row.cstName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="使用人" prop="userName" align="center" width="100">
+          <template slot-scope="{row}">
+            <span>{{ row.userName }}</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" align="center" width="150">
@@ -166,7 +105,7 @@
   </template>
   
   <script>
-  import { carPayList } from '@/api/carpay/carpay-list'
+  import { xhParkPayList } from '@/api/xhparkpay/xhparkpay-list'
   import waves from '@/directive/waves' // waves directive
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import { projectSelect } from '@/api/config/config'
@@ -244,7 +183,7 @@
     methods: {
       getList() {
         this.listLoading = false
-        carPayList(this.listQuery).then(response => {
+        xhParkPayList(this.listQuery).then(response => {
           this.list = response.data.pageInfo.list
           this.total = response.data.pageInfo.total
   

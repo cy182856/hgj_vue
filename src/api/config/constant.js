@@ -8,3 +8,10 @@ export function constantList(query) {
     params: query
   })
 }
+export function constantUpdate(data) {
+  return request({
+    url: url + '/constant/update',
+    method: 'post',
+    data
+  })
+}
